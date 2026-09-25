@@ -1,0 +1,10 @@
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  "package-manager": "pnpm",
+  // Block commits on any known vulnerability, dev tooling included (it runs on this machine).
+  "low": true,
+  "report-type": "important",
+  // Exceptions must name the advisory and why it does not apply, e.g.:
+  // "allowlist": ["GHSA-xxxx-xxxx-xxxx|some-pkg"]  // not reachable: only used at build time
+  "allowlist": [],
+}

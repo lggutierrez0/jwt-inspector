@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# WXT / build output
+.output/
+.wxt/
+stats.html
+stats-*.json
+*.zip
+
+# Tests / coverage
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# Logs & env
+*.log
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Claude Code: local-only settings/credentials
+.claude/settings.local.json
+.claude/*.local.*
+
+# Git worktrees (Claude Code native + using-git-worktrees fallback)
+.claude/worktrees/
+.worktrees/
+
+# Spec Kit catalog caches
+.specify/**/.cache/

@@ -1,0 +1,6 @@
+# Fast checks on staged files, then whole-project gates. Any failure blocks the commit.
+pnpm exec lint-staged
+pnpm typecheck
+pnpm test
+# Blocks the commit if any dependency has a known vulnerability (see audit-ci.jsonc).
+pnpm audit:ci

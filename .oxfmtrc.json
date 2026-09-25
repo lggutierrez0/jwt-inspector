@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "singleQuote": true,
+  "semi": true,
+  "trailingComma": "all",
+  "sortImports": {},
+  "sortPackageJson": true,
+  "sortTailwindcss": {
+    "stylesheet": "./src/assets/styles/tailwind.css",
+    "functions": ["cn", "cva"]
+  },
+  "ignorePatterns": [
+    ".output/**",
+    ".wxt/**",
+    "coverage/**",
+    "pnpm-lock.yaml",
+    "CHANGELOG.md",
+    ".specify/**",
+    ".claude/**"
+  ]
+}

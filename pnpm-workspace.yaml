@@ -1,0 +1,29 @@
+# pnpm >= 11 reads every non-auth setting from this file (not .npmrc).
+packages:
+  - .
+
+# Exact versions only: `pnpm add foo` writes "1.2.3", never "^1.2.3".
+saveExact: true
+savePrefix: ''
+
+# Refuse to run with a different Node/pnpm than package.json#engines.
+engineStrict: true
+
+# Supply-chain hardening.
+minimumReleaseAge: 1440 # minutes; ignore versions published < 24h ago
+trustPolicy: no-downgrade # fail if a package loses its provenance/trust level
+blockExoticSubdeps: true # transitive deps may not come from git/tarball URLs
+strictDepBuilds: true # unknown postinstall scripts fail the install
+
+# Dependencies explicitly allowed to run install scripts (none needed today).
+# Add `pkg: true` only after reviewing what its script does.
+allowBuilds: {}
+
+# Pin vulnerable transitive dependencies here, with the advisory that motivates it.
+# Example:
+#   overrides:
+#     some-transitive-dep: 1.2.3 # GHSA-xxxx-xxxx-xxxx
+overrides:
+  # 3.2.2 was published without npm provenance (3.2.1 has it) -> trustPolicy flags a
+  # downgrade. Same maintainer, but we pin the attested release. Required by vitest (^3.2.1).
+  why-is-node-running: 3.2.1

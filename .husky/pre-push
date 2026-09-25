@@ -1,0 +1,2 @@
+# Coverage thresholds (vitest.config.ts) are enforced before code leaves the machine.
+pnpm test:coverage
