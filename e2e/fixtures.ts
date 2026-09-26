@@ -8,14 +8,16 @@ const extensionPath = path.resolve(import.meta.dirname, '../.output/chrome-mv3')
  * Launches Chromium with the built extension. An empty `userDataDir` is a throwaway profile; a
  * fixed one survives close and relaunch, like a real browser restart.
  */
-export async function launchExtension(userDataDir = '') {
+export async function launchExtension(userDataDir = '', language: 'en' | 'es' = 'en') {
   // Pin the browser language: extension messages follow the OS locale, not the page locale.
+  const posix = language === 'es' ? 'es_ES' : 'en_US';
+  const tag = language === 'es' ? 'es-ES' : 'en-US';
   const context = await chromium.launchPersistentContext(userDataDir, {
     channel: 'chromium',
-    locale: 'en-US',
-    env: { ...process.env, LANGUAGE: 'en_US', LANG: 'en_US.UTF-8', LC_ALL: 'en_US.UTF-8' },
+    locale: tag,
+    env: { ...process.env, LANGUAGE: posix, LANG: `${posix}.UTF-8`, LC_ALL: `${posix}.UTF-8` },
     args: [
-      '--lang=en-US',
+      `--lang=${tag}`,
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`,
     ],
