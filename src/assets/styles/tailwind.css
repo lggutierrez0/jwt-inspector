@@ -49,8 +49,7 @@
   --text-state--line-height: 26px;
   --text-state--font-weight: 700;
 
-  /* Side panel widths: stack below 360px, wider gutter from 400px (DESIGN.md). */
-  --breakpoint-narrow: 360px;
+  /* Side panel widths: wider gutter from 400px. Layouts otherwise wrap by content (DESIGN.md). */
   --breakpoint-wide: 400px;
 
   --radius-control: 2px;
