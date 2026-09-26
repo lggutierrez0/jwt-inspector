@@ -59,19 +59,19 @@ into a website. JWT Inspector keeps that work inside your browser:
 > Store or Firefox Add-ons. You can build it from source today; features land incrementally
 > following the [roadmap](docs/roadmap.md).
 
-| #   | Milestone                                                  | Status     |
-| --- | ---------------------------------------------------------- | ---------- |
-| 000 | Foundation: tooling, quality gates, side panel shell       | ✅ Done    |
-| 001 | Token vault and inspection                                 | 🛠️ Planned |
-| 002 | Security score (1–10, cited rules)                         | Planned    |
-| 003 | Signature verification (secret, PEM/JWK, JWKS URL)         | Planned    |
-| 004 | Token builder (all JWS algorithms, keys, JSON editor)      | Planned    |
-| 005 | Automatic detection: cookies, localStorage, sessionStorage | Planned    |
-| 006 | Automatic detection: request headers and URL parameters    | Planned    |
-| 007 | Opt-in deep capture: bodies and console logs               | Planned    |
-| 008 | Vault encryption with passphrase                           | Planned    |
-| 009 | Help and about view                                        | Planned    |
-| —   | JWE (encrypted tokens)                                     | Deferred   |
+| #   | Milestone                                                  | Status   |
+| --- | ---------------------------------------------------------- | -------- |
+| 000 | Foundation: tooling, quality gates, side panel shell       | ✅ Done  |
+| 001 | Token vault and inspection                                 | ✅ Done  |
+| 002 | Security score (1–10, cited rules)                         | Planned  |
+| 003 | Signature verification (secret, PEM/JWK, JWKS URL)         | Planned  |
+| 004 | Token builder (all JWS algorithms, keys, JSON editor)      | Planned  |
+| 005 | Automatic detection: cookies, localStorage, sessionStorage | Planned  |
+| 006 | Automatic detection: request headers and URL parameters    | Planned  |
+| 007 | Opt-in deep capture: bodies and console logs               | Planned  |
+| 008 | Vault encryption with passphrase                           | Planned  |
+| 009 | Help and about view                                        | Planned  |
+| —   | JWE (encrypted tokens)                                     | Deferred |
 
 Each milestone has its specification under [`specs/`](specs/) once work starts.
 
@@ -84,19 +84,19 @@ implemented.
 
 - Every detected, saved or created token with a **label**, the **last characters** of the token,
   its **source** (cookie, local storage, session storage, request header, URL parameter, body,
-  console log, manual, created), **time left** and **total lifetime**. _(001, sources 005–007)_
-- Live countdowns; expired and not-yet-valid tokens are clearly marked. _(001)_
-- Delete one token (with undo), clear expired, or clear all. _(001)_
+  console log, manual, created), **time left** and **total lifetime**. _(sources: manual today, automatic from 005–007)_
+- Live countdowns; expired and not-yet-valid tokens are clearly marked.
+- Delete one token (with undo), clear expired, or clear all.
 
 ### Detail view — everything public, nothing exposed by accident
 
 - Status first: valid / expired / not yet valid, time left, and a time ruler from issue to expiry,
-  with absolute times in your time zone. _(001)_
+  with absolute times in your time zone.
 - Header parameters and claims explained (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`, `alg`,
-  `kid`, `jku`, `x5u`, …), raw parts and pretty-printed JSON. _(001)_
+  `kid`, `jku`, `x5u`, …), raw parts and pretty-printed JSON.
 - **Sensitive values masked by default** (signature, personal data, secret-looking claims) with a
-  per-field reveal toggle; one-click copy for the token and any value. _(001)_
-- Rename labels inline. _(001)_
+  per-field reveal toggle; one-click copy for the token and any value.
+- Rename labels inline.
 - **Security score from 1 to 10**, each finding explained and linked to its source. _(002)_
 - **Signature verification** with a shared secret, a PEM/JWK public key or a JWKS URL. _(003)_
 
@@ -179,12 +179,25 @@ select `.output/firefox-mv3/manifest.json`.
 
 ## Usage
 
-1. Click the JWT Inspector icon in the toolbar to open the panel.
-2. **Add token** and paste a JWT (a leading `Bearer ` is fine) to decode it instantly.
-3. Pick any token in the list to open its detail: status and time left first, then claims,
-   raw parts and JSON. Reveal masked values only when you need them; copy anything with one click.
-4. Once detection ships, grant access to the site you are debugging and its tokens appear in the
-   list with their source.
+1. Click the JWT Inspector icon in the toolbar to open the panel (a side panel in Chromium, the
+   sidebar in Firefox).
+2. Choose **`[ add token ]`** and paste a JWT (a leading `Bearer ` is fine), then press Enter.
+   Invalid input is rejected with the exact reason; pasting a token you already saved opens it
+   instead of duplicating it.
+3. The list shows each token's label, last characters, source, total lifetime and a live status
+   (valid, expiring soon, expired, not yet valid) with time left.
+4. Open a token to read it like a specification: status and time left first, issuer, subject and
+   audience, a time ruler from issue to expiry, then numbered sections for the encoded structure,
+   the header, the payload claims (each explained and cited to its RFC) and the JSON.
+5. The signature and personal claims are **masked** until you choose `[ reveal ]`. `[ copy ]` copies
+   the real value even while it is masked on screen.
+6. `[ rename ]` edits the label in place (Enter saves, Escape cancels). `[ delete ]` removes a token
+   with a few seconds to undo; `[ clear expired ]` and `[ clear all ]` ask for confirmation first.
+7. Tokens stay in the extension's own local storage until you delete them. Nothing leaves your
+   browser.
+
+Once detection ships (005–007), grant access to the site you are debugging and its tokens appear in
+the list with their source.
 
 ## Tech stack
 

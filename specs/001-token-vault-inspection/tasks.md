@@ -221,7 +221,7 @@ clipboard contents (quickstart "mask-reveal-copy").
 - [x] T084 Run `pnpm test:coverage` (thresholds in vitest.config.ts); add missing tests until `src/domain/**` ≥ 90% and project ≥ 80% on every metric
 - [x] T085 Design gate (plan "Design workflow"): run `impeccable detect --json` on src/ui/ and src/assets/styles/tailwind.css and fix mechanical findings; run `impeccable audit` and `impeccable critique` on the built side panel (two independent assessments; ask the user before spawning sub-agents), apply one fix batch, confirm once
 - [x] T086 Regenerate DESIGN.md from the built UI with `impeccable document` (discharges the direction contract FINISH line); remove the "pre-build direction" banner; keep tokens in src/assets/styles/tailwind.css identical to DESIGN.md
-- [ ] T087 [P] Update README.md (status of 001 to Done, usage section with real behavior), docs/roadmap.md (001 Done) and CLAUDE.md if commands changed
+- [x] T087 [P] Update README.md (status of 001 to Done, usage section with real behavior), docs/roadmap.md (001 Done) and CLAUDE.md if commands changed
 - [ ] T088 Run the manual pass in specs/001-token-vault-inspection/quickstart.md in Chromium and Firefox; record results and fix defects through regression tests first
 
 ---
