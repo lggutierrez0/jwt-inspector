@@ -3,3 +3,154 @@ extDescription: Detecta, inspecciona, verifica y crea JSON Web Tokens desde un p
 app:
   loading: Cargando tokens
   loadError: No se pudieron leer los tokens guardados. Vuelve a abrir el panel para reintentar.
+parts:
+  header: header
+  payload: payload
+  signature: firma
+add:
+  open: agregar token
+  title: Agregar un token
+  label: Token
+  helper: Pega un JWT. El prefijo "Bearer " se quita automáticamente.
+  submit: agregar token
+  cancel: cancelar
+  errors:
+    empty: Primero pega un token.
+    wrongPartCount: Un JWT tiene 3 partes separadas por puntos. Este texto tiene $1.
+    invalidBase64Url: El $1 no es base64url válido.
+    invalidUtf8: El $1 no es texto UTF-8 válido.
+    invalidJson: El $1 no es JSON válido.
+    notAnObject: El $1 debe ser un objeto JSON.
+    tooLarge: Este token pesa $1 KiB. El límite es 64 KiB.
+    saveFailed: No se pudo guardar el token. El almacenamiento del navegador está lleno o no disponible.
+detail:
+  summary: Resumen del token
+  timing: Tiempos
+  jsonOf: JSON del $1
+  undecodable: Este token guardado ya no se puede decodificar.
+  back: volver
+  alreadySaved: Este token ya estaba guardado, así que no se agregó de nuevo.
+  tokenLabel: 'Token:'
+  issuer: 'Emisor:'
+  subject: 'Sujeto:'
+  audience: 'Audiencia:'
+  status: 'Estado:'
+  missing: sin definir
+  issued: 'Emitido:'
+  notBefore: 'No antes de:'
+  expires: 'Expira:'
+  jwe: Este es un token cifrado (JWE). Todavía no se puede inspeccionar tokens cifrados. Abajo se muestra su header protegido.
+  sections:
+    structure: Estructura
+    header: Header
+    payload: Claims del payload
+    json: JSON
+  warnings:
+    invalidClaim: El claim "$1" no es una fecha válida, así que el estado lo ignora.
+    expBeforeIat: El claim "exp" es anterior a "iat".
+status:
+  valid: Válido
+  expired: Expirado
+  notYetValid: Aún no válido
+  neverExpires: No expira
+time:
+  left: quedan $1
+  ago: hace $1
+  in: en $1
+ruler:
+  label: Vida útil desde $1 hasta $2. Ahora en el $3 por ciento.
+  now: ahora
+mask:
+  masked: oculto
+  reveal: mostrar
+  hide: ocultar
+  revealField: mostrar $1
+  hideField: ocultar $1
+  revealed: $1 visible
+  hidden: $1 oculto
+claims:
+  iss:
+    title: Emisor
+    summary: Quién emitió el token.
+  sub:
+    title: Sujeto
+    summary: Quién o qué describe el token.
+  aud:
+    title: Audiencia
+    summary: A quién va destinado el token.
+  exp:
+    title: Expiración
+    summary: Después de este momento el token debe rechazarse.
+  nbf:
+    title: No antes de
+    summary: Antes de este momento el token debe rechazarse.
+  iat:
+    title: Emitido el
+    summary: Cuándo se emitió el token.
+  jti:
+    title: ID del JWT
+    summary: Identificador único, sirve para detectar reutilizaciones.
+  name:
+    title: Nombre completo
+    summary: Dato personal del sujeto.
+  given_name:
+    title: Nombre
+    summary: Dato personal del sujeto.
+  family_name:
+    title: Apellido
+    summary: Dato personal del sujeto.
+  middle_name:
+    title: Segundo nombre
+    summary: Dato personal del sujeto.
+  nickname:
+    title: Apodo
+    summary: Dato personal del sujeto.
+  preferred_username:
+    title: Usuario preferido
+    summary: El nombre con que el sujeto prefiere que lo llamen.
+  email:
+    title: Email
+    summary: Dato personal del sujeto.
+  phone_number:
+    title: Teléfono
+    summary: Dato personal del sujeto.
+  address:
+    title: Dirección
+    summary: Dato personal del sujeto.
+  birthdate:
+    title: Fecha de nacimiento
+    summary: Dato personal del sujeto.
+headerParams:
+  alg:
+    title: Algoritmo
+    summary: Algoritmo con que se firmó el token.
+  jku:
+    title: URL del JWK Set
+    summary: Dónde obtener el conjunto de claves que contiene la clave de firma.
+  jwk:
+    title: JSON Web Key
+    summary: Clave pública incluida en el header.
+  kid:
+    title: ID de clave
+    summary: Qué clave firmó el token.
+  x5u:
+    title: URL X.509
+    summary: Dónde obtener la cadena de certificados de firma.
+  x5c:
+    title: Cadena de certificados X.509
+    summary: Cadena de certificados incluida en el header.
+  x5t:
+    title: Huella X.509
+    summary: Huella SHA-1 del certificado de firma.
+  x5tS256:
+    title: Huella X.509 SHA-256
+    summary: Huella SHA-256 del certificado de firma.
+  typ:
+    title: Tipo
+    summary: Tipo de medio del token completo.
+  cty:
+    title: Tipo de contenido
+    summary: Tipo de medio del payload.
+  crit:
+    title: Crítico
+    summary: Extensiones que el receptor debe entender para aceptar el token.

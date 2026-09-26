@@ -1,8 +1,14 @@
 import { useReducer } from 'react';
 
+import { findById } from '@/domain/vault/token-record';
+
+import { useRemovedTokenGuard } from './app/use-removed-token-guard';
 import { useVault } from './app/use-vault';
 import { INITIAL_VIEW, viewReducer } from './app/view-reducer';
+import { Command } from './components/command';
 import { useI18n } from './i18n/i18n-context';
+import { AddTokenView } from './views/add-token-view';
+import { DetailView } from './views/detail-view';
 
 interface AppShellProps {
   readonly version: string;
@@ -21,23 +27,79 @@ function LoadingSkeleton({ label }: { label: string }) {
   );
 }
 
+interface AppHeaderProps {
+  readonly version: string;
+  /** Shown when adding is possible from the current screen. */
+  readonly onAdd: (() => void) | null;
+}
+
+function AppHeader({ version, onAdd }: AppHeaderProps) {
+  const { t } = useI18n();
+  return (
+    <header className="flex items-center justify-between gap-2 border-b border-line px-3 py-3 wide:px-4">
+      <div className="flex items-baseline gap-2">
+        <h1 className="text-head">{t('extName')}</h1>
+        <span className="text-cite text-ink-muted">v{version}</span>
+      </div>
+      {onAdd !== null && <Command tone="primary" label={t('add.open')} onClick={onAdd} />}
+    </header>
+  );
+}
+
 export function AppShell({ version }: AppShellProps) {
   const { t } = useI18n();
   const vault = useVault();
-  const [view] = useReducer(viewReducer, INITIAL_VIEW);
+  const [view, dispatch] = useReducer(viewReducer, INITIAL_VIEW);
+  const { screen } = view;
+  const openRecord =
+    vault.status === 'ready' && screen.name === 'detail'
+      ? findById(vault.state, screen.id)
+      : undefined;
+
+  useRemovedTokenGuard(vault, screen, openRecord, dispatch);
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface text-ink">
-      <header className="flex items-baseline justify-between border-b border-line px-3 py-3 min-[400px]:px-4">
-        <h1 className="text-head">{t('extName')}</h1>
-        <span className="text-cite text-ink-muted">v{version}</span>
-      </header>
-      <main className="flex-1" data-screen={view.screen.name}>
+      <AppHeader
+        version={version}
+        onAdd={
+          vault.status === 'ready' && screen.name !== 'add'
+            ? () => {
+                dispatch({ type: 'openAdd' });
+              }
+            : null
+        }
+      />
+      <main className="flex-1" data-screen={screen.name}>
         {vault.status === 'loading' && <LoadingSkeleton label={t('app.loading')} />}
         {vault.status === 'error' && (
-          <p role="alert" className="px-3 py-4 text-status-expired min-[400px]:px-4">
+          <p role="alert" className="px-3 py-4 text-status-expired wide:px-4">
             {t('app.loadError')}
           </p>
+        )}
+        {vault.status === 'ready' && screen.name === 'add' && (
+          <AddTokenView
+            onSaved={(id, notice) => {
+              dispatch(
+                notice === undefined
+                  ? { type: 'openDetail', id }
+                  : { type: 'openDetail', id, notice },
+              );
+            }}
+            onCancel={() => {
+              dispatch({ type: 'back' });
+            }}
+          />
+        )}
+        {openRecord !== undefined && screen.name === 'detail' && (
+          <DetailView
+            key={openRecord.id}
+            record={openRecord}
+            {...(screen.notice === undefined ? {} : { notice: screen.notice })}
+            onBack={() => {
+              dispatch({ type: 'back' });
+            }}
+          />
         )}
       </main>
     </div>

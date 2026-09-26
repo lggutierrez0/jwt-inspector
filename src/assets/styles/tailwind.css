@@ -44,6 +44,10 @@
   --text-state--line-height: 26px;
   --text-state--font-weight: 700;
 
+  /* Side panel widths: stack below 360px, wider gutter from 400px (DESIGN.md). */
+  --breakpoint-narrow: 360px;
+  --breakpoint-wide: 400px;
+
   --radius-control: 2px;
   --shadow-float: 0 8px 24px -8px color-mix(in oklch, var(--color-ink) 28%, transparent);
 }

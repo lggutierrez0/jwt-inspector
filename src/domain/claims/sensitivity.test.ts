@@ -1,4 +1,4 @@
-import { isSensitiveClaim } from './sensitivity';
+import { isSensitiveClaim, MASKED, redactSensitive } from './sensitivity';
 
 describe('isSensitiveClaim (FR-015)', () => {
   it.each([
@@ -40,5 +40,36 @@ describe('isSensitiveClaim (FR-015)', () => {
 
   it('matches personal-data claims only as the last segment', () => {
     expect(isSensitiveClaim(['name', 'format'])).toBe(false);
+  });
+});
+
+describe('redactSensitive', () => {
+  it('replaces sensitive leaves with the masked marker and reports it', () => {
+    expect(
+      redactSensitive(
+        { sub: 'u', email: 'a@b.test', credentials: { apiKey: 'k', scope: 'read' } },
+        [],
+      ),
+    ).toEqual({
+      value: { sub: 'u', email: MASKED, credentials: { apiKey: MASKED, scope: 'read' } },
+      redacted: true,
+    });
+  });
+
+  it('masks the whole value when its own path is sensitive', () => {
+    expect(redactSensitive({ a: 1 }, ['client_secret'])).toEqual({ value: MASKED, redacted: true });
+  });
+
+  it('walks arrays without treating indexes as names', () => {
+    expect(redactSensitive([{ token: 't' }, { ok: 1 }], ['items'])).toEqual({
+      value: [{ token: MASKED }, { ok: 1 }],
+      redacted: true,
+    });
+  });
+
+  it('returns the value untouched when nothing is sensitive', () => {
+    const value = { sub: 'u', roles: ['a'] };
+
+    expect(redactSensitive(value, [])).toEqual({ value, redacted: false });
   });
 });

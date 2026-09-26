@@ -3,3 +3,154 @@ extDescription: Detect, inspect, verify and craft JSON Web Tokens from a side pa
 app:
   loading: Loading tokens
   loadError: Saved tokens couldn't be read. Reopen the panel to try again.
+parts:
+  header: header
+  payload: payload
+  signature: signature
+add:
+  open: add token
+  title: Add a token
+  label: Token
+  helper: Paste a JWT. A leading "Bearer " is removed for you.
+  submit: add token
+  cancel: cancel
+  errors:
+    empty: Paste a token first.
+    wrongPartCount: A JWT has 3 parts separated by dots. This text has $1.
+    invalidBase64Url: The $1 isn't valid base64url.
+    invalidUtf8: The $1 isn't valid UTF-8 text.
+    invalidJson: The $1 isn't valid JSON.
+    notAnObject: The $1 must be a JSON object.
+    tooLarge: This token is $1 KiB. The limit is 64 KiB.
+    saveFailed: The token couldn't be saved. Browser storage is full or unavailable.
+detail:
+  summary: Token summary
+  timing: Timing
+  jsonOf: $1 JSON
+  undecodable: This saved token can't be decoded any more.
+  back: back
+  alreadySaved: This token was already saved, so it wasn't added again.
+  tokenLabel: 'Token:'
+  issuer: 'Issuer:'
+  subject: 'Subject:'
+  audience: 'Audience:'
+  status: 'Status:'
+  missing: not set
+  issued: 'Issued:'
+  notBefore: 'Not before:'
+  expires: 'Expires:'
+  jwe: This is an encrypted token (JWE). Inspecting encrypted tokens isn't supported yet. Its protected header is shown below.
+  sections:
+    structure: Structure
+    header: Header
+    payload: Payload claims
+    json: JSON
+  warnings:
+    invalidClaim: The "$1" claim isn't a valid date, so the status ignores it.
+    expBeforeIat: The "exp" claim is earlier than "iat".
+status:
+  valid: Valid
+  expired: Expired
+  notYetValid: Not yet valid
+  neverExpires: Never expires
+time:
+  left: $1 left
+  ago: $1 ago
+  in: in $1
+ruler:
+  label: Lifetime from $1 to $2. Now at $3 percent.
+  now: now
+mask:
+  masked: masked
+  reveal: reveal
+  hide: hide
+  revealField: reveal $1
+  hideField: hide $1
+  revealed: $1 revealed
+  hidden: $1 hidden
+claims:
+  iss:
+    title: Issuer
+    summary: Who issued the token.
+  sub:
+    title: Subject
+    summary: Who or what the token is about.
+  aud:
+    title: Audience
+    summary: Who the token is meant for.
+  exp:
+    title: Expiration Time
+    summary: After this moment the token must be rejected.
+  nbf:
+    title: Not Before
+    summary: Before this moment the token must be rejected.
+  iat:
+    title: Issued At
+    summary: When the token was issued.
+  jti:
+    title: JWT ID
+    summary: Unique identifier, used to detect replays.
+  name:
+    title: Full name
+    summary: Personal data about the subject.
+  given_name:
+    title: Given name
+    summary: Personal data about the subject.
+  family_name:
+    title: Family name
+    summary: Personal data about the subject.
+  middle_name:
+    title: Middle name
+    summary: Personal data about the subject.
+  nickname:
+    title: Nickname
+    summary: Personal data about the subject.
+  preferred_username:
+    title: Preferred username
+    summary: The name the subject prefers to be called by.
+  email:
+    title: Email
+    summary: Personal data about the subject.
+  phone_number:
+    title: Phone number
+    summary: Personal data about the subject.
+  address:
+    title: Address
+    summary: Personal data about the subject.
+  birthdate:
+    title: Birthdate
+    summary: Personal data about the subject.
+headerParams:
+  alg:
+    title: Algorithm
+    summary: Algorithm used to sign the token.
+  jku:
+    title: JWK Set URL
+    summary: Where to fetch the key set that holds the signing key.
+  jwk:
+    title: JSON Web Key
+    summary: Public key embedded in the header.
+  kid:
+    title: Key ID
+    summary: Which key signed the token.
+  x5u:
+    title: X.509 URL
+    summary: Where to fetch the signing certificate chain.
+  x5c:
+    title: X.509 Certificate Chain
+    summary: Certificate chain embedded in the header.
+  x5t:
+    title: X.509 Thumbprint
+    summary: SHA-1 thumbprint of the signing certificate.
+  x5tS256:
+    title: X.509 SHA-256 Thumbprint
+    summary: SHA-256 thumbprint of the signing certificate.
+  typ:
+    title: Type
+    summary: Media type of the whole token.
+  cty:
+    title: Content Type
+    summary: Media type of the payload.
+  crit:
+    title: Critical
+    summary: Extensions the receiver must understand to accept the token.

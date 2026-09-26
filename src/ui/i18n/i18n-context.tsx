@@ -18,7 +18,15 @@ export function useI18n(): I18nValue {
   return value;
 }
 
-/** Production translator: WXT's typed i18n over `browser.i18n`. */
+/**
+ * Production translator: WXT's typed i18n over `browser.i18n`. Dates and numbers use the locale
+ * the messages were resolved in (`@@ui_locale`, e.g. "es" or "pt_BR"), so text and formatting
+ * never mix languages; the browser's UI language can differ from it.
+ */
 export function createBrowserI18n(): I18nValue {
-  return { t: i18n.t, locale: browser.i18n.getUILanguage() };
+  const messagesLocale = i18n.t('@@ui_locale').replace('_', '-');
+  return {
+    t: i18n.t,
+    locale: messagesLocale === '' ? browser.i18n.getUILanguage() : messagesLocale,
+  };
 }

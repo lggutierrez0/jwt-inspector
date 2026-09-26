@@ -14,6 +14,8 @@ export class InMemoryVaultRepository implements VaultRepository {
   state: VaultState;
   droppedCount = 0;
   failNextSave: SaveResult | null = null;
+  /** Like the real storage: change events arrive after `save` resolves. */
+  deferNotifications = false;
   saves = 0;
   readonly #listeners = new Set<(state: VaultState) => void>();
 
@@ -33,7 +35,13 @@ export class InMemoryVaultRepository implements VaultRepository {
     }
     this.saves += 1;
     this.state = state;
-    this.#emit();
+    if (this.deferNotifications) {
+      setTimeout(() => {
+        this.#emit();
+      }, 0);
+    } else {
+      this.#emit();
+    }
     return Promise.resolve({ ok: true });
   }
 

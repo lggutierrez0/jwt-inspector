@@ -31,6 +31,7 @@ export async function installLocale(locale: TestLocale = 'en'): Promise<void> {
   const messages = await loadMessages(locale);
   vi.spyOn(fakeBrowser.i18n, 'getMessage').mockImplementation(
     (name: string, subs?: string | readonly (string | number)[]) => {
+      if (name === '@@ui_locale') return locale;
       const entry = messages[name];
       if (entry === undefined) return '';
       const list =
@@ -38,5 +39,6 @@ export async function installLocale(locale: TestLocale = 'en'): Promise<void> {
       return substitute(entry.message, list);
     },
   );
-  vi.spyOn(fakeBrowser.i18n, 'getUILanguage').mockReturnValue(locale);
+  // Like Chromium: the UI language can differ from the locale used for messages.
+  vi.spyOn(fakeBrowser.i18n, 'getUILanguage').mockReturnValue('en-US');
 }

@@ -147,3 +147,16 @@ documentation) on 2026-09-26.
 - **Consequence for tasks**: after the UI is built, run impeccable `detect`, `audit` and
   `critique` (two independent assessments), fix in one batch, then regenerate DESIGN.md from
   the built UI (`impeccable document`) — required by the direction contract's FINISH line.
+
+## R15. Lint profile adjustments during implementation
+
+- **Decision**: the `react-perf` oxlint plugin is not enabled.
+- **Rationale**: its `jsx-no-new-*` rules flag every inline handler or object prop, forcing
+  `useCallback`/`useMemo` everywhere without a measured benefit (Principle V, KISS). Rendering
+  cost is guarded where it matters instead: the list re-render test and the SC-004 E2E budget.
+- **Also**: `max-lines-per-function` and `max-classes-per-file` are off only in test files and
+  shared test doubles, where long `describe` blocks and grouped fakes are the norm.
+- **Also**: `import/max-dependencies` is raised from 10 to 16: views legitimately compose many
+  small components; `max-lines-per-function` (50) stays as the signal to split components.
+- **Also**: `max-lines-per-function` is 50 for `.ts` (logic) and 80 for `.tsx` components, where
+  the formatter spreads JSX props one per line; blank lines and comments do not count.
