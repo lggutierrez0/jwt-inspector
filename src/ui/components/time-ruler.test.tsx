@@ -36,10 +36,10 @@ describe('TimeRuler (DESIGN.md "Time ruler")', () => {
     expect(screen.getByTestId('now-mark')).toHaveStyle({ left: '100%' });
   });
 
-  it('labels both ends with absolute local times and a time zone', () => {
+  it('does not repeat the absolute times, which the timing list already shows', () => {
     renderWithProviders(<TimeRuler lifetime={life} now={NOW} />);
 
-    expect(screen.getAllByText(/UTC/u)).toHaveLength(2);
+    expect(screen.queryAllByText(/UTC/u)).toHaveLength(0);
   });
 
   it('summarizes itself for assistive technology', () => {

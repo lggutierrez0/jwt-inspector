@@ -9,6 +9,8 @@ export interface ViewState {
   readonly screen: Screen;
   /** Scroll offset of the list, restored when coming back from a detail. */
   readonly listScroll: number;
+  /** Token opened last, so going back can return focus to its line. */
+  readonly lastOpenedId: string | null;
 }
 
 export type ViewAction =
@@ -22,7 +24,11 @@ export type ViewAction =
   | { readonly type: 'back' }
   | { readonly type: 'tokenRemovedExternally'; readonly id: string };
 
-export const INITIAL_VIEW: ViewState = { screen: { name: 'list' }, listScroll: 0 };
+export const INITIAL_VIEW: ViewState = {
+  screen: { name: 'list' },
+  listScroll: 0,
+  lastOpenedId: null,
+};
 
 export function viewReducer(state: ViewState, action: ViewAction): ViewState {
   if (action.type === 'openAdd') return { ...state, screen: { name: 'add' } };
@@ -32,7 +38,11 @@ export function viewReducer(state: ViewState, action: ViewAction): ViewState {
       action.notice === undefined
         ? { name: 'detail', id: action.id }
         : { name: 'detail', id: action.id, notice: action.notice };
-    return { screen, listScroll: action.listScroll ?? state.listScroll };
+    return {
+      screen,
+      listScroll: action.listScroll ?? state.listScroll,
+      lastOpenedId: action.id,
+    };
   }
   const isOpen = state.screen.name === 'detail' && state.screen.id === action.id;
   return isOpen ? { ...state, screen: { name: 'list' } } : state;

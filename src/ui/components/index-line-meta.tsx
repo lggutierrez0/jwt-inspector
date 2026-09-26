@@ -21,7 +21,7 @@ export function IndexLineMeta({ record, lifetime }: IndexLineMetaProps) {
 
   return (
     <span className="flex flex-wrap gap-x-3 text-cite text-ink-muted">
-      <span className="font-stretch-condensed">...{record.raw.slice(-TAIL_LENGTH)}</span>
+      <span className="font-stretch-condensed">…{record.raw.slice(-TAIL_LENGTH)}</span>
       <span data-testid="source">{t(`sources.${record.source.kind}`)}</span>
       <span>{lifetimeText}</span>
     </span>

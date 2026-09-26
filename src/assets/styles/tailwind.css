@@ -1,5 +1,8 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/martian-mono/standard.css';
+@import './fonts.css';
+
+/* Docs mention forbidden classes as examples; never generate CSS from Markdown. */
+@source not '../../../**/*.md';
 
 /*
  * Design tokens mirrored 1:1 from DESIGN.md. Components use these tokens only.
@@ -24,6 +27,8 @@
   --color-status-expired: oklch(0.52 0.19 27);
   --color-status-future: oklch(0.5 0.14 245);
   --color-focus: oklch(0.5 0.12 215);
+  /* Dialog backdrop: dark in both themes (a light ink wash would glare in dark mode). */
+  --color-scrim: oklch(0.16 0.02 265 / 55%);
 
   --color-part-header-tint: color-mix(in oklch, var(--color-part-header) 12%, transparent);
   --color-part-payload-tint: color-mix(in oklch, var(--color-part-payload) 12%, transparent);
@@ -74,16 +79,17 @@
 }
 
 @layer base {
-  html {
-    background: var(--color-surface);
+  :root {
+    color-scheme: light;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--color-focus) 28%, transparent);
     color: var(--color-ink);
-    font-family: var(--font-mono);
-    font-size: var(--text-body);
-    line-height: var(--text-body--line-height);
   }
 
   :focus-visible {
-    outline: 1px solid var(--color-focus);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 
@@ -95,4 +101,19 @@
       animation-duration: 0s !important;
     }
   }
+}
+
+/*
+ * Unlayered on purpose: Chromium injects an unlayered stylesheet into extension pages
+ * (body { font-family: <platform sans>; font-size: 75% }), and unlayered rules beat any
+ * @layer. Keep body typography here so Martian Mono and 13px actually apply.
+ */
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  caret-color: var(--color-focus);
+  scrollbar-color: var(--color-line-strong) transparent;
 }

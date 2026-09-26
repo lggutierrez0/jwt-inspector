@@ -36,3 +36,6 @@ blob-report/
 
 # Spec Kit catalog caches
 .specify/**/.cache/
+
+# impeccable review captures (regenerated, not source)
+.impeccable/review/

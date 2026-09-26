@@ -59,7 +59,6 @@ time:
   in: in $1
 ruler:
   label: Lifetime from $1 to $2. Now at $3 percent.
-  now: now
 mask:
   masked: masked
   reveal: reveal

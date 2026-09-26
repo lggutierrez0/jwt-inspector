@@ -79,7 +79,7 @@ describe('DetailView (US1, FR-013)', () => {
     const timing = screen.getByText('Issued:');
     const ruler = screen.getByRole('figure', { name: /Lifetime/u });
     const headings = screen
-      .getAllByRole('heading', { level: 2 })
+      .getAllByRole('heading', { level: 3 })
       .map((heading) => heading.textContent);
     expect(headings).toEqual(['1. Structure', '2. Header', '3. Payload claims', '4. JSON']);
     const structure = screen.getByRole('heading', { name: '1. Structure' });
@@ -257,5 +257,19 @@ describe('DetailView (US1, FR-013)', () => {
       expect(screen.getByRole('alert')).toHaveTextContent("The change couldn't be saved.");
       expect(screen.getByRole('region', { name: 'Token summary' })).toBeInTheDocument();
     });
+  });
+
+  it('names the token in the view heading (WCAG 2.4.6)', () => {
+    show(valid1h);
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Checkout session' })).toBeInTheDocument();
+  });
+
+  it('shows NumericDate claims as dates, not only epochs', () => {
+    show(valid1h);
+
+    const entry = screen.getByText('"exp"').closest('div.flex-col');
+    expect(entry).toHaveTextContent(/2026/u);
+    expect(entry).toHaveTextContent(/UTC/u);
   });
 });

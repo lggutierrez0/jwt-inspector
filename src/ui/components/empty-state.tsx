@@ -7,7 +7,7 @@ export function EmptyState({ onAdd }: { readonly onAdd: () => void }) {
   return (
     <div className="flex flex-col items-start gap-3 px-3 py-8 wide:px-4">
       <h2 className="text-head">{t('empty.title')}</h2>
-      <p className="max-w-prose text-ink-muted font-stretch-normal">{t('empty.body')}</p>
+      <p className="max-w-prose text-ink-muted">{t('empty.body')}</p>
       <Command tone="primary" label={t('add.open')} onClick={onAdd} />
     </div>
   );

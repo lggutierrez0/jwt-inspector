@@ -54,10 +54,6 @@ export function TimeRuler({ lifetime, now, tone = 'valid' }: TimeRulerProps) {
           className={`absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 ${MARK_COLOR[tone]}`}
         />
       </div>
-      <div aria-hidden="true" className="flex justify-between gap-2 text-cite text-ink-muted">
-        <span>{start}</span>
-        <span>{end}</span>
-      </div>
     </figure>
   );
 }

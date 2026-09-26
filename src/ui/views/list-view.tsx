@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import type { TokenRecord } from '@/domain/vault/token-record';
 
@@ -12,6 +12,8 @@ interface ListViewProps {
   readonly tokens: readonly TokenRecord[];
   /** Scroll offset to restore when coming back from a detail. */
   readonly initialScroll: number;
+  /** Line to focus when coming back from its detail. */
+  readonly focusId?: string | null;
   readonly onOpen: (id: string, listScroll: number) => void;
   readonly onAdd: () => void;
   readonly onClearAll: () => Promise<ActionOutcome>;
@@ -22,6 +24,7 @@ interface ListViewProps {
 export function ListView({
   tokens,
   initialScroll,
+  focusId = null,
   onOpen,
   onAdd,
   onClearAll,
@@ -29,9 +32,13 @@ export function ListView({
 }: ListViewProps) {
   const { t } = useI18n();
 
+  const list = useRef<HTMLUListElement>(null);
+
   useEffect(() => {
     window.scrollTo(0, initialScroll);
-  }, [initialScroll]);
+    if (focusId === null) return;
+    list.current?.querySelector<HTMLElement>(`[data-token-id="${CSS.escape(focusId)}"]`)?.focus();
+  }, [initialScroll, focusId]);
 
   const open = useCallback(
     (id: string) => {
@@ -45,7 +52,7 @@ export function ListView({
   return (
     <section aria-label={t('list.label')} className="flex flex-col">
       <ListToolbar tokens={tokens} onClearAll={onClearAll} onClearExpired={onClearExpired} />
-      <ul>
+      <ul ref={list}>
         {tokens.map((record) => (
           <IndexLine key={record.id} record={record} onOpen={open} />
         ))}

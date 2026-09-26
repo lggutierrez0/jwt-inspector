@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import type { ActionOutcome } from '../app/action-outcome';
 import { useI18n } from '../i18n/i18n-context';
 import { Command } from './command';
+import { FocusHeading } from './focus-heading';
 
 interface LabelFormProps {
   readonly initial: string;
@@ -99,15 +100,17 @@ export function InlineLabelEditor({ label, onRename }: InlineLabelEditorProps) {
   }
 
   return (
-    <p className="flex flex-wrap items-baseline gap-x-2 break-words">
-      <span className="text-label">{t('detail.tokenLabel')}</span>
-      <span>{label}</span>
+    <div className="flex flex-wrap items-baseline gap-x-2 break-words">
+      <span className="text-label" aria-hidden="true">
+        {t('detail.tokenLabel')}
+      </span>
+      <FocusHeading className="text-head">{label}</FocusHeading>
       <Command
         label={t('label.rename')}
         onClick={() => {
           setEditing(true);
         }}
       />
-    </p>
+    </div>
   );
 }

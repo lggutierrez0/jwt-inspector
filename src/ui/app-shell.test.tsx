@@ -216,7 +216,7 @@ describe('AppShell', () => {
       await user.click(await screen.findByRole('button', { name: /Session/u }));
       await user.click(screen.getByRole('button', { name: 'delete' }));
 
-      expect(await screen.findByText('Token deleted.')).toBeInTheDocument();
+      expect(await screen.findByRole('status')).toHaveTextContent('Token deleted.');
       expect(repository.state.tokens).toHaveLength(0);
       await user.click(screen.getByRole('button', { name: 'undo' }));
 
@@ -246,6 +246,31 @@ describe('AppShell', () => {
       await user.click(screen.getByRole('button', { name: 'remove' }));
 
       expect(await screen.findByText('No tokens yet')).toBeInTheDocument();
+    });
+  });
+
+  describe('focus follows the view (P1 critique, WCAG 2.4.3)', () => {
+    it('moves focus into the add form and then to the new token', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<AppShell version="1.2.3" />);
+
+      await user.click(await screen.findByRole('button', { name: 'add token' }));
+      expect(screen.getByRole('heading', { name: 'Add a token' })).toHaveFocus();
+
+      await user.click(screen.getByRole('textbox', { name: 'Token' }));
+      await user.paste(valid1h);
+      await user.keyboard('{Enter}');
+      expect(await screen.findByRole('heading', { level: 2, name: /8f2c-41/u })).toHaveFocus();
+    });
+
+    it('returns focus to the line that was opened', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository: saved() });
+
+      await user.click(await screen.findByRole('button', { name: /Session/u }));
+      await user.click(screen.getByRole('button', { name: 'back' }));
+
+      expect(await screen.findByRole('button', { name: /Session/u })).toHaveFocus();
     });
   });
 });

@@ -2,7 +2,7 @@ import { INITIAL_VIEW, viewReducer, type ViewState } from './view-reducer';
 
 describe('viewReducer (data-model "State transitions")', () => {
   it('starts on the list at the top', () => {
-    expect(INITIAL_VIEW).toEqual({ screen: { name: 'list' }, listScroll: 0 });
+    expect(INITIAL_VIEW).toEqual({ screen: { name: 'list' }, listScroll: 0, lastOpenedId: null });
   });
 
   it('opens the add screen', () => {
@@ -20,20 +20,30 @@ describe('viewReducer (data-model "State transitions")', () => {
     expect(state).toEqual({
       screen: { name: 'detail', id: 't1', notice: 'alreadySaved' },
       listScroll: 240,
+      lastOpenedId: 't1',
     });
   });
 
   it('goes back to the list keeping the remembered scroll position', () => {
-    const detail: ViewState = { screen: { name: 'detail', id: 't1' }, listScroll: 240 };
+    const detail: ViewState = {
+      screen: { name: 'detail', id: 't1' },
+      listScroll: 240,
+      lastOpenedId: 't1',
+    };
 
     expect(viewReducer(detail, { type: 'back' })).toEqual({
       screen: { name: 'list' },
       listScroll: 240,
+      lastOpenedId: 't1',
     });
   });
 
   it('returns to the list when the open token is removed elsewhere', () => {
-    const detail: ViewState = { screen: { name: 'detail', id: 't1' }, listScroll: 0 };
+    const detail: ViewState = {
+      screen: { name: 'detail', id: 't1' },
+      listScroll: 0,
+      lastOpenedId: 't1',
+    };
 
     expect(viewReducer(detail, { type: 'tokenRemovedExternally', id: 't1' }).screen).toEqual({
       name: 'list',
@@ -41,7 +51,11 @@ describe('viewReducer (data-model "State transitions")', () => {
   });
 
   it('ignores removals of other tokens', () => {
-    const detail: ViewState = { screen: { name: 'detail', id: 't1' }, listScroll: 0 };
+    const detail: ViewState = {
+      screen: { name: 'detail', id: 't1' },
+      listScroll: 0,
+      lastOpenedId: 't1',
+    };
 
     expect(viewReducer(detail, { type: 'tokenRemovedExternally', id: 't2' })).toBe(detail);
   });

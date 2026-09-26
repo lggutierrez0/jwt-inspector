@@ -9,13 +9,15 @@ interface MaskedValueProps {
   readonly revealed: ReactNode;
   /** What to show while masked; defaults to the localized "[masked]" marker. */
   readonly concealed?: ReactNode;
+  /** Block content (e.g. a JSON <pre>): takes the full width so the content scrolls, not the page. */
+  readonly block?: boolean;
 }
 
 /**
  * Masked by default, revealed per field on explicit request (constitution III, FR-015). State is
  * local, so closing and reopening the view masks everything again.
  */
-export function MaskedValue({ name, revealed, concealed }: MaskedValueProps) {
+export function MaskedValue({ name, revealed, concealed, block = false }: MaskedValueProps) {
   const { t } = useI18n();
   const [shown, setShown] = useState(false);
   const [announcement, setAnnouncement] = useState('');
@@ -26,8 +28,14 @@ export function MaskedValue({ name, revealed, concealed }: MaskedValueProps) {
   };
 
   return (
-    <span className="inline-flex flex-wrap items-baseline gap-x-2">
-      <span className="break-all font-stretch-condensed">
+    <span
+      className={
+        block
+          ? 'flex w-full min-w-0 flex-col gap-1'
+          : 'inline-flex flex-wrap items-baseline gap-x-2'
+      }
+    >
+      <span className={`min-w-0 break-all font-stretch-condensed ${block ? 'order-2' : ''}`}>
         {shown
           ? revealed
           : (concealed ?? <span className="text-ink-muted">[{t('mask.masked')}]</span>)}

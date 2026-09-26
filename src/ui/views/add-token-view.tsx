@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react';
 
 import type { DetailNotice } from '../app/view-reducer';
 import { Command } from '../components/command';
+import { FocusHeading } from '../components/focus-heading';
 import { TextField } from '../components/text-field';
 import { useI18n } from '../i18n/i18n-context';
 import { useAddToken } from './use-add-token';
@@ -24,7 +25,7 @@ export function AddTokenView({ onSaved, onCancel }: AddTokenViewProps) {
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-2 px-3 py-4 wide:px-4">
-      <h2 className="text-head">{t('add.title')}</h2>
+      <FocusHeading className="text-head">{t('add.title')}</FocusHeading>
       <TextField
         label={t('add.label')}
         helper={t('add.helper')}

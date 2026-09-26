@@ -29,8 +29,10 @@ export function TimingList({ claims, now }: TimingListProps) {
         <div key={claim} className="flex gap-2">
           <dt className="text-label">{t(label)}</dt>
           <dd className="flex flex-col">
-            <span>{formatRelative(at, now, locale)}</span>
-            <span className="text-cite text-ink-muted">{formatAbsolute(at, locale)}</span>
+            <span className="font-stretch-condensed">{formatRelative(at, now, locale)}</span>
+            <span className="text-cite text-ink-muted font-stretch-condensed">
+              {formatAbsolute(at, locale)}
+            </span>
           </dd>
         </div>
       ))}

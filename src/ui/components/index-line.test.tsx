@@ -52,7 +52,7 @@ describe('IndexLine (FR-008)', () => {
   it('shows the last 8 characters of the token', () => {
     show(record(valid1h));
 
-    expect(screen.getByText(`...${valid1h.slice(-8)}`)).toBeInTheDocument();
+    expect(screen.getByText(`…${valid1h.slice(-8)}`)).toBeInTheDocument();
   });
 
   it.each(TOKEN_SOURCE_KINDS)('names the %s source', (kind) => {

@@ -24,7 +24,8 @@ export function JsonView({ name, copyName, value }: JsonViewProps) {
   const block = 'overflow-x-auto rounded-control bg-surface-sunken p-3 font-stretch-condensed';
 
   const copy = (
-    <div className="flex justify-end">
+    <div className="flex items-baseline justify-between gap-2">
+      <span className="text-cite text-ink-muted">{name}</span>
       <CopyCommand name={copyName} text={full} />
     </div>
   );
@@ -46,6 +47,7 @@ export function JsonView({ name, copyName, value }: JsonViewProps) {
     <div className="flex flex-col gap-1">
       {copy}
       <MaskedValue
+        block
         name={name}
         revealed={<pre className={block}>{full}</pre>}
         concealed={<pre className={block}>{concealed}</pre>}

@@ -38,7 +38,7 @@ export function ConfirmDialog({ title, onConfirm, onCancel }: ConfirmDialogProps
         event.preventDefault();
         onCancel();
       }}
-      className="m-auto w-full max-w-sm rounded-control bg-surface-raised p-4 text-ink shadow-float backdrop:bg-ink/40"
+      className="m-auto w-full max-w-sm rounded-control bg-surface-raised p-4 text-ink shadow-float backdrop:bg-scrim"
     >
       <h2 id={titleId} className="text-head">
         {title}

@@ -59,7 +59,6 @@ time:
   in: en $1
 ruler:
   label: Vida útil desde $1 hasta $2. Ahora en el $3 por ciento.
-  now: ahora
 mask:
   masked: oculto
   reveal: mostrar

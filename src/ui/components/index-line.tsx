@@ -22,7 +22,10 @@ function IndexTime({ claims }: { readonly claims: TimeClaims }) {
   const now = useNow();
   const status = statusText(evaluateStatus(claims, now), claims, now, t, locale);
   return (
-    <span data-tone={status.tone} className={`flex shrink-0 gap-2 ${TONE_TEXT[status.tone]}`}>
+    <span
+      data-tone={status.tone}
+      className={`ml-auto flex shrink-0 gap-2 font-stretch-condensed ${TONE_TEXT[status.tone]}`}
+    >
       <span>{status.word}</span>
       {status.phrase !== null && <span>{status.phrase}</span>}
     </span>
@@ -41,13 +44,14 @@ export const IndexLine = memo(function IndexLine({ record, onOpen }: IndexLinePr
     <li className="border-b border-line">
       <button
         type="button"
+        data-token-id={record.id}
         onClick={() => {
           onOpen(record.id);
         }}
-        className="flex min-h-14 w-full cursor-pointer flex-col gap-1 px-3 py-2 text-left hover:bg-surface-raised focus-visible:bg-surface-raised wide:px-4"
+        className="flex min-h-14 w-full cursor-pointer flex-col gap-1 px-3 py-2 text-left hover:bg-surface-raised focus-visible:bg-surface-raised focus-visible:-outline-offset-2 wide:px-4"
       >
-        <span className="flex w-full items-baseline gap-2">
-          <span className="min-w-0 truncate">{record.label}</span>
+        <span className="flex w-full flex-wrap items-baseline gap-x-2">
+          <span className="max-w-full min-w-0 truncate text-label">{record.label}</span>
           <span
             data-leader
             aria-hidden="true"

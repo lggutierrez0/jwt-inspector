@@ -40,7 +40,6 @@ export function ListToolbar({ tokens, onClearAll, onClearExpired }: ListToolbarP
         <span className="flex gap-3">
           {expiredCount > 0 && (
             <Command
-              tone="danger"
               label={t('remove.clearExpired')}
               onClick={() => {
                 setConfirming('expired');
@@ -48,7 +47,6 @@ export function ListToolbar({ tokens, onClearAll, onClearExpired }: ListToolbarP
             />
           )}
           <Command
-            tone="danger"
             label={t('remove.clearAll')}
             onClick={() => {
               setConfirming('all');

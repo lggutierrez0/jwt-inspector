@@ -80,7 +80,7 @@ export function AppShell({ version }: AppShellProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-surface text-ink">
       <AppHeader version={version} onAdd={hasTokens && screen.name !== 'add' ? openAdd : null} />
-      <main className="flex-1" data-screen={screen.name}>
+      <main className={`flex-1 ${deleted === null ? '' : 'pb-16'}`} data-screen={screen.name}>
         {vault.status === 'loading' && <LoadingSkeleton label={t('app.loading')} />}
         {vault.status === 'error' && (
           <p role="alert" className="px-3 py-4 text-status-expired wide:px-4">
@@ -91,6 +91,7 @@ export function AppShell({ version }: AppShellProps) {
           <ListView
             tokens={vault.state.tokens}
             initialScroll={view.listScroll}
+            focusId={view.lastOpenedId}
             onOpen={openDetail}
             onAdd={openAdd}
             onClearAll={actions.clearAll}
@@ -120,6 +121,8 @@ export function AppShell({ version }: AppShellProps) {
           />
         )}
       </main>
+      {/* Always mounted so screen readers reliably announce changes (a live region born full is not). */}
+      <output className="sr-only">{deleted === null ? '' : t('remove.deleted')}</output>
       {deleted !== null && (
         <UndoToast
           key={deleted.record.id}

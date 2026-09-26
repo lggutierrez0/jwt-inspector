@@ -30,7 +30,7 @@ test.describe('US4 keep my vault tidy', () => {
   test('deletes a token and undoes it within 5 seconds (US4 AS2)', async ({ page }) => {
     await page.getByRole('button', { name: /Live/u }).click();
     await page.getByRole('button', { name: 'delete' }).click();
-    await expect(page.getByText('Token deleted.')).toBeVisible();
+    await expect(page.getByRole('status')).toHaveText('Token deleted.');
     await expect(page.getByRole('button', { name: /Live/u })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'undo' }).click();
@@ -40,7 +40,7 @@ test.describe('US4 keep my vault tidy', () => {
       .getByRole('list')
       .getByRole('button');
     await expect(lines.nth(0)).toContainText('Live');
-    await expect(page.getByText('Token deleted.')).toBeHidden({ timeout: 6000 });
+    await expect(page.getByRole('button', { name: 'undo' })).toBeHidden({ timeout: 6000 });
   });
 
   test('clears only expired tokens after confirming (US4 AS7)', async ({ page }) => {

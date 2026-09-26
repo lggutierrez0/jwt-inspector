@@ -15,6 +15,13 @@ const TONES: Record<Tone, string> = {
   danger: 'text-status-expired',
 };
 
+// On the inverted primary command, muted or focus-colored brackets would vanish into the ink.
+const BRACKETS: Record<Tone, string> = {
+  default: 'text-ink-muted group-focus-visible:text-focus',
+  primary: 'text-surface',
+  danger: 'text-ink-muted group-focus-visible:text-focus',
+};
+
 /**
  * Bracketed text command (DESIGN.md "Commands"). Brackets are decorative; the accessible name is
  * the word or an explicit `aria-label` that adds context ("reveal email").
@@ -34,14 +41,14 @@ export function Command({
     >
       <span
         aria-hidden="true"
-        className="text-ink-muted transition-transform duration-150 group-focus-visible:text-focus group-active:translate-x-0.5"
+        className={`transition-transform duration-150 group-active:translate-x-0.5 ${BRACKETS[tone]}`}
       >
         [
       </span>
       <span className="px-1 underline-offset-4 group-hover:underline">{label}</span>
       <span
         aria-hidden="true"
-        className="text-ink-muted transition-transform duration-150 group-focus-visible:text-focus group-active:-translate-x-0.5"
+        className={`transition-transform duration-150 group-active:-translate-x-0.5 ${BRACKETS[tone]}`}
       >
         ]
       </span>

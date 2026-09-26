@@ -17,7 +17,7 @@ export function StructureFigure({ segments }: StructureFigureProps) {
     <figure className="flex flex-col gap-3 rounded-control bg-surface-sunken p-3 font-stretch-condensed">
       <div className="flex flex-col gap-1">
         <span className="break-all text-part-header">{header}</span>
-        <figcaption className="text-cite text-ink-muted">{t('parts.header')}</figcaption>
+        <span className="text-cite text-ink-muted">{t('parts.header')}</span>
       </div>
       <div className="flex flex-col gap-1">
         <span className="break-all text-part-payload">{payload}</span>
