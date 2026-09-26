@@ -7,6 +7,29 @@ parts:
   header: header
   payload: payload
   signature: firma
+info:
+  open: info
+  title: Acerca de JWT Inspector
+  purpose: >-
+    JWT Inspector decodifica, inspecciona y ayuda a gestionar JSON Web Tokens sin salir del
+    navegador. Pega un token para ver su header, sus claims y su estado; nada de lo que pegas
+    sale nunca de este dispositivo.
+  storedTitle: Qué se guarda
+  stored: Los tokens que agregas y sus etiquetas, guardados solo en este perfil del navegador.
+  notStoredTitle: Qué no se guarda ni se envía a ningún lado
+  notStored: >-
+    Sin acceso a la red, sin analítica, sin sincronización entre dispositivos o cuentas del
+    navegador.
+  version: Versión $1
+  roadmapTitle: Qué está construido y qué está planeado
+  roadmapBuilt: 'Construido: entrada manual, la bóveda de tokens, la vista de detalle, copiar, renombrar, eliminar, deshacer.'
+  roadmapPlanned: >-
+    Planeado: puntaje de seguridad, verificación de firma, un creador de tokens, y detección
+    automática desde cookies, almacenamiento, headers y requests.
+  back: volver
+language:
+  switchToEnglish: Cambiar a inglés
+  switchToSpanish: Cambiar a español
 add:
   open: agregar token
   title: Agregar un token

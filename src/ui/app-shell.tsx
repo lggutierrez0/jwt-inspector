@@ -1,17 +1,21 @@
 import { useCallback, useReducer } from 'react';
 
+import type { TokenRecord } from '@/domain/vault/token-record';
 import { findById } from '@/domain/vault/token-record';
 
+import type { ActionOutcome } from './app/action-outcome';
 import { useRemovedTokenGuard } from './app/use-removed-token-guard';
 import { useUndoableDelete } from './app/use-undoable-delete';
+import type { VaultView } from './app/use-vault';
 import { useVault } from './app/use-vault';
 import { useVaultActions } from './app/use-vault-actions';
-import { INITIAL_VIEW, viewReducer } from './app/view-reducer';
-import { Command } from './components/command';
+import { INITIAL_VIEW, viewReducer, type Screen, type ViewAction } from './app/view-reducer';
+import { CommandBar } from './components/command-bar';
 import { UndoToast } from './components/undo-toast';
 import { useI18n } from './i18n/i18n-context';
 import { AddTokenView } from './views/add-token-view';
 import { DetailView } from './views/detail-view';
+import { InfoView } from './views/info-view';
 import { ListView } from './views/list-view';
 
 interface AppShellProps {
@@ -31,22 +35,84 @@ function LoadingSkeleton({ label }: { label: string }) {
   );
 }
 
-interface AppHeaderProps {
-  readonly version: string;
-  /** Shown when adding is possible from the current screen. */
-  readonly onAdd: (() => void) | null;
-}
-
-function AppHeader({ version, onAdd }: AppHeaderProps) {
+function AppHeader({ version }: { readonly version: string }) {
   const { t } = useI18n();
   return (
-    <header className="flex items-center justify-between gap-2 border-b border-line px-3 py-3 wide:px-4">
-      <div className="flex items-baseline gap-2">
-        <h1 className="text-head">{t('extName')}</h1>
-        <span className="text-cite text-ink-muted">v{version}</span>
-      </div>
-      {onAdd !== null && <Command tone="primary" label={t('add.open')} onClick={onAdd} />}
+    <header className="flex items-baseline gap-2 border-b border-line px-3 py-3 wide:px-4">
+      <h1 className="text-head">{t('extName')}</h1>
+      <span className="text-cite text-ink-muted">v{version}</span>
     </header>
+  );
+}
+
+interface AppMainProps {
+  readonly version: string;
+  readonly vault: VaultView;
+  readonly view: { readonly screen: Screen; readonly listScroll: number };
+  readonly openRecord: TokenRecord | undefined;
+  readonly dispatch: (action: ViewAction) => void;
+  readonly actions: {
+    readonly rename: (id: string, label: string) => Promise<ActionOutcome>;
+    readonly remove: (id: string) => Promise<ActionOutcome>;
+  };
+  readonly focusId: string | null;
+}
+
+/** The one view for the current screen; extracted so `AppShell` stays a thin coordinator. */
+function AppMain({ version, vault, view, openRecord, dispatch, actions, focusId }: AppMainProps) {
+  const { t } = useI18n();
+  const { screen } = view;
+  const openDetail = useCallback(
+    (id: string, listScroll: number) => {
+      dispatch({ type: 'openDetail', id, listScroll });
+    },
+    [dispatch],
+  );
+  const back = useCallback(() => {
+    dispatch({ type: 'back' });
+  }, [dispatch]);
+
+  if (vault.status === 'loading') return <LoadingSkeleton label={t('app.loading')} />;
+  if (vault.status === 'error') {
+    return (
+      <p role="alert" className="px-3 py-4 text-status-expired wide:px-4">
+        {t('app.loadError')}
+      </p>
+    );
+  }
+  if (screen.name === 'list') {
+    return (
+      <ListView
+        tokens={vault.state.tokens}
+        initialScroll={view.listScroll}
+        focusId={focusId}
+        onOpen={openDetail}
+      />
+    );
+  }
+  if (screen.name === 'add') {
+    return (
+      <AddTokenView
+        onSaved={(id, notice) => {
+          dispatch(
+            notice === undefined ? { type: 'openDetail', id } : { type: 'openDetail', id, notice },
+          );
+        }}
+        onCancel={back}
+      />
+    );
+  }
+  if (screen.name === 'info') return <InfoView version={version} onBack={back} />;
+  if (openRecord === undefined) return null;
+  return (
+    <DetailView
+      key={openRecord.id}
+      record={openRecord}
+      {...(screen.notice === undefined ? {} : { notice: screen.notice })}
+      onBack={back}
+      onRename={(label) => actions.rename(openRecord.id, label)}
+      onDelete={() => actions.remove(openRecord.id)}
+    />
   );
 }
 
@@ -65,61 +131,35 @@ export function AppShell({ version }: AppShellProps) {
   const openAdd = useCallback(() => {
     dispatch({ type: 'openAdd' });
   }, []);
-  const openDetail = useCallback((id: string, listScroll: number) => {
-    dispatch({ type: 'openDetail', id, listScroll });
-  }, []);
-  const back = useCallback(() => {
-    dispatch({ type: 'back' });
+  const openInfo = useCallback(() => {
+    dispatch({ type: 'openInfo' });
   }, []);
   const { deleted, onDeleted, dismiss: dismissUndo } = useUndoableDelete(dispatch);
   const actions = useVaultActions(onDeleted);
 
-  // The empty state carries the only "add token" action (one action per intent).
-  const hasTokens = vault.status === 'ready' && vault.state.tokens.length > 0;
-
   return (
     <div className="flex min-h-dvh flex-col bg-surface text-ink">
-      <AppHeader version={version} onAdd={hasTokens && screen.name !== 'add' ? openAdd : null} />
+      <AppHeader version={version} />
+      {vault.status === 'ready' && (
+        <CommandBar
+          screen={screen.name}
+          tokens={vault.state.tokens}
+          onAdd={openAdd}
+          onInfo={openInfo}
+          onClearAll={actions.clearAll}
+          onClearExpired={actions.clearExpired}
+        />
+      )}
       <main className={`flex-1 ${deleted === null ? '' : 'pb-16'}`} data-screen={screen.name}>
-        {vault.status === 'loading' && <LoadingSkeleton label={t('app.loading')} />}
-        {vault.status === 'error' && (
-          <p role="alert" className="px-3 py-4 text-status-expired wide:px-4">
-            {t('app.loadError')}
-          </p>
-        )}
-        {vault.status === 'ready' && screen.name === 'list' && (
-          <ListView
-            tokens={vault.state.tokens}
-            initialScroll={view.listScroll}
-            focusId={view.lastOpenedId}
-            onOpen={openDetail}
-            onAdd={openAdd}
-            onClearAll={actions.clearAll}
-            onClearExpired={actions.clearExpired}
-          />
-        )}
-        {vault.status === 'ready' && screen.name === 'add' && (
-          <AddTokenView
-            onSaved={(id, notice) => {
-              dispatch(
-                notice === undefined
-                  ? { type: 'openDetail', id }
-                  : { type: 'openDetail', id, notice },
-              );
-            }}
-            onCancel={back}
-          />
-        )}
-        {openRecord !== undefined && screen.name === 'detail' && (
-          <DetailView
-            key={openRecord.id}
-            record={openRecord}
-            {...(screen.notice === undefined ? {} : { notice: screen.notice })}
-            onBack={back}
-            onRename={(label) => actions.rename(openRecord.id, label)}
-            onDelete={() => actions.remove(openRecord.id)}
-          />
-        )}
+        <AppMain
+          version={version}
+          vault={vault}
+          view={view}
+          openRecord={openRecord}
+          dispatch={dispatch}
+          actions={actions}
+          focusId={view.lastOpenedId}
+        />
       </main>
       {/* Always mounted so screen readers reliably announce changes (a live region born full is not). */}
       <output className="sr-only">{deleted === null ? '' : t('remove.deleted')}</output>

@@ -100,7 +100,7 @@ entry shows the correct label, tail, source, time remaining and total lifetime, 
    when none is present it gets a numbered generic label (e.g. "Token 3"). Personal data such as
    `name` or `email` is never used, because it is masked.
 4. **Given** an empty vault, **When** the user opens the panel, **Then** an empty state explains
-   what the tool does and offers the "Add token" action.
+   what the tool does, and "Add token" is reachable from the persistent command bar (US5).
 5. **Given** a list entry, **When** the user selects it (pointer or keyboard), **Then** its
    detail view opens, and returning to the list keeps the previous scroll position.
 
@@ -260,8 +260,8 @@ closing the panel (quickstart "always-on-bar").
 - **FR-011**: The default label MUST be the first present of `preferred_username`, `sub`, `iss`;
   otherwise "Token N" where N is the next unused number. Claims masked by FR-015 (personal data
   such as `name` or `email`) MUST NOT be used, because labels are always visible.
-- **FR-012**: The empty state MUST explain the purpose of the tool and offer the "Add token"
-  action.
+- **FR-012**: The empty state MUST explain the purpose of the tool; the "Add token" action is
+  available from the persistent command bar (FR-027) rather than repeated inside the empty state.
 
 **Detail view**
 

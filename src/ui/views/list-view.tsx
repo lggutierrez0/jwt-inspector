@@ -2,10 +2,8 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import type { TokenRecord } from '@/domain/vault/token-record';
 
-import type { ActionOutcome } from '../app/action-outcome';
 import { EmptyState } from '../components/empty-state';
 import { IndexLine } from '../components/index-line';
-import { ListToolbar } from '../components/list-toolbar';
 import { useI18n } from '../i18n/i18n-context';
 
 interface ListViewProps {
@@ -15,21 +13,13 @@ interface ListViewProps {
   /** Line to focus when coming back from its detail. */
   readonly focusId?: string | null;
   readonly onOpen: (id: string, listScroll: number) => void;
-  readonly onAdd: () => void;
-  readonly onClearAll: () => Promise<ActionOutcome>;
-  readonly onClearExpired: () => Promise<ActionOutcome>;
 }
 
-/** The index of saved tokens, most recently added first (FR-007). */
-export function ListView({
-  tokens,
-  initialScroll,
-  focusId = null,
-  onOpen,
-  onAdd,
-  onClearAll,
-  onClearExpired,
-}: ListViewProps) {
+/**
+ * The index of saved tokens, most recently added first (FR-007). Adding and clearing live in
+ * the persistent command bar (FR-027), not here.
+ */
+export function ListView({ tokens, initialScroll, focusId = null, onOpen }: ListViewProps) {
   const { t } = useI18n();
 
   const list = useRef<HTMLUListElement>(null);
@@ -47,11 +37,13 @@ export function ListView({
     [onOpen],
   );
 
-  if (tokens.length === 0) return <EmptyState onAdd={onAdd} />;
+  if (tokens.length === 0) return <EmptyState />;
 
   return (
     <section aria-label={t('list.label')} className="flex flex-col">
-      <ListToolbar tokens={tokens} onClearAll={onClearAll} onClearExpired={onClearExpired} />
+      <p className="px-3 py-2 text-cite text-ink-muted wide:px-4">
+        {t('list.count', tokens.length)}
+      </p>
       <ul ref={list}>
         {tokens.map((record) => (
           <IndexLine key={record.id} record={record} onOpen={open} />

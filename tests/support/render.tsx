@@ -76,7 +76,7 @@ function Providers({
 export function renderWithProviders(
   ui: ReactElement,
   overrides: Partial<TestServices> = {},
-  options?: Omit<RenderOptions, 'wrapper'> & { readonly i18n?: I18nOverrides },
+  options?: Omit<RenderOptions, 'wrapper'> & { readonly i18n?: I18nOverrides | undefined },
 ) {
   const services = createTestServices(overrides);
   const { i18n: i18nOverrides = {}, ...renderOptions } = options ?? {};

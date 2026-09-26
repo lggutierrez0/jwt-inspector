@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext } from 'react';
 
@@ -42,35 +42,36 @@ function Probe() {
   );
 }
 
-async function renderProvider(repository = new InMemoryLocalePreferenceRepository()) {
+function renderProvider(repository = new InMemoryLocalePreferenceRepository()) {
   render(
     <SwitchableI18nProvider detectedLocale="en" loadMessages={loadMessages} repository={repository}>
       <Probe />
     </SwitchableI18nProvider>,
   );
-  await screen.findByTestId('text');
   return repository;
 }
 
 describe('SwitchableI18nProvider (FR-029)', () => {
   it('defaults to the detected browser locale with no saved override', async () => {
-    await renderProvider();
+    renderProvider();
 
+    // Waits for the settled (fetched) messages, not just the initial browser-translator fallback.
+    await screen.findByText('Hello');
     expect(screen.getByTestId('locale')).toHaveTextContent('en');
     expect(screen.getByTestId('override')).toHaveTextContent('none');
-    expect(screen.getByTestId('text')).toHaveTextContent('Hello');
   });
 
   it('loads a previously saved override on mount', async () => {
-    await renderProvider(new InMemoryLocalePreferenceRepository('es'));
+    renderProvider(new InMemoryLocalePreferenceRepository('es'));
 
+    await screen.findByText('Hola');
     expect(screen.getByTestId('locale')).toHaveTextContent('es');
-    expect(screen.getByTestId('text')).toHaveTextContent('Hola');
   });
 
   it('setLocale switches synchronously (both locales preloaded) and persists the choice', async () => {
     const user = userEvent.setup();
-    const repository = await renderProvider();
+    const repository = renderProvider();
+    await screen.findByText('Hello');
 
     await user.click(screen.getByRole('button', { name: 'Spanish' }));
 
@@ -81,14 +82,14 @@ describe('SwitchableI18nProvider (FR-029)', () => {
 
   it('setLocale(null) reverts to the detected locale and clears the persisted override', async () => {
     const user = userEvent.setup();
-    const repository = await renderProvider(new InMemoryLocalePreferenceRepository('es'));
+    const repository = renderProvider(new InMemoryLocalePreferenceRepository('es'));
+    await screen.findByText('Hola');
 
-    await act(async () => {
-      await user.click(screen.getByRole('button', { name: 'Follow browser' }));
-    });
+    await user.click(screen.getByRole('button', { name: 'Follow browser' }));
 
     expect(screen.getByTestId('locale')).toHaveTextContent('en');
     expect(screen.getByTestId('override')).toHaveTextContent('none');
+    expect(screen.getByTestId('text')).toHaveTextContent('Hello');
     await expect(repository.load()).resolves.toBeNull();
   });
 });

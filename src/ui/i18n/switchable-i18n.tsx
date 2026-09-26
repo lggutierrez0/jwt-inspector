@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 
+import { i18n } from '#i18n';
 import type {
   LocalePreferenceRepository,
   SupportedLocale,
@@ -20,7 +21,10 @@ interface SwitchableI18nProviderProps {
 
 /**
  * Every shipped locale's messages are preloaded once, so `setLocale` (FR-029) switches
- * synchronously with no per-toggle fetch and no flash of missing text.
+ * synchronously with no per-toggle fetch and no flash of missing text. Before that preload
+ * settles (a local fetch, but never instant in a real browser), the panel paints immediately
+ * with the browser's own translator for the same detected locale, so opening the panel is never
+ * gated on a network-shaped round trip (SC-001).
  */
 export function SwitchableI18nProvider({
   detectedLocale,
@@ -58,8 +62,12 @@ export function SwitchableI18nProvider({
     [repository],
   );
 
-  const value = useMemo<I18nValue | null>(() => {
-    if (messages === null) return null;
+  const value = useMemo<I18nValue>(() => {
+    if (messages === null) {
+      // Fallback: the real browser.i18n for the detected locale, identical to what shipped
+      // before this provider existed, and to what this same provider settles into once loaded.
+      return { t: i18n.t, locale: detectedLocale, localeOverride: null, setLocale };
+    }
     const locale = override ?? detectedLocale;
     return {
       t: createTranslator(messages[locale]),
@@ -68,10 +76,6 @@ export function SwitchableI18nProvider({
       setLocale,
     };
   }, [messages, override, detectedLocale, setLocale]);
-
-  // Both locale files are small, local extension resources: this is not a visible loading state
-  // in practice, only a brief absence of the tree while the first fetch settles.
-  if (value === null) return null;
 
   return <I18nContext value={value}>{children}</I18nContext>;
 }

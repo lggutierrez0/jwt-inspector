@@ -232,22 +232,22 @@ switch that overrides the browser default and persists.
 - [x] T095 [P] [US5] Implement src/infrastructure/i18n/fetch-locale-messages.ts: `loadLocaleMessages(locale)` via `fetch(browser.runtime.getURL(\`/_locales/${locale}/messages.json\`))`, colocated test with a stubbed `fetch`
 - [x] T096 [US5] Write failing tests src/ui/i18n/switchable-i18n.test.tsx: with injected `loadMessages` (two in-memory message sets) and `InMemoryLocalePreferenceRepository`, defaults to the detected browser locale; loads a previously saved override on mount; `setLocale('es')` updates `t`/`locale` synchronously (both locales preloaded) and persists it; `setLocale(null)` reverts to the detected locale and clears the persisted override
 - [x] T097 [US5] Implement src/ui/i18n/switchable-i18n.tsx (`SwitchableI18nProvider`) and extend `I18nValue` with `setLocale(locale: SupportedLocale | null): void` (turns T096 green)
-- [ ] T098 [P] [US5] Write failing tests src/ui/app/nav-commands.test.ts for the pure `buildNavCommands(input): NavCommand[]`: omits "Add token" on the add screen; omits "Info" on the info screen; includes "Clear expired" only when `expiredCount > 0`; includes "Clear all" only when `tokenCount > 0`; command order matches FR-027 (data-model "NavCommand")
-- [ ] T099 [US5] Implement src/ui/app/nav-commands.ts (turns T098 green)
-- [ ] T100 [P] [US5] Write failing component tests src/ui/components/command-bar.test.tsx: renders each `NavCommand` as a `Command`; "Clear expired"/"Clear all" open a `ConfirmDialog` stating the exact count before acting (replaces list-toolbar.test.tsx); the language slot shows the current code and its accessible name names the language switched to
-- [ ] T101 [US5] Implement src/ui/components/command-bar.tsx (turns T100 green); delete src/ui/components/list-toolbar.tsx and its test (superseded)
-- [ ] T102 [US5] Write failing tests src/ui/views/info-view.test.tsx: focused `h2` heading (FocusHeading, WCAG 2.4.3); purpose paragraph; what is/is not stored; current version; a built-vs-planned roadmap summary; `[ back ]` calls `onBack`
-- [ ] T103 [US5] Implement src/ui/views/info-view.tsx and its en/es messages (turns T102 green)
-- [ ] T104 [US5] Update src/ui/app/view-reducer.test.ts then view-reducer.ts: add screen `info`; `openInfo` remembers the screen it was opened from (`returnTo`); `back` from `info` returns to it (data-model "State transitions"); existing `detail → list` back behavior (scroll position) is unchanged
+- [x] T098 [P] [US5] Write failing tests src/ui/app/nav-commands.test.ts for the pure `buildNavCommands(input): NavCommand[]`: omits "Add token" on the add screen; omits "Info" on the info screen; includes "Clear expired" only when `expiredCount > 0`; includes "Clear all" only when `tokenCount > 0`; command order matches FR-027 (data-model "NavCommand")
+- [x] T099 [US5] Implement src/ui/app/nav-commands.ts (turns T098 green)
+- [x] T100 [P] [US5] Write failing component tests src/ui/components/command-bar.test.tsx: renders each `NavCommand` as a `Command`; "Clear expired"/"Clear all" open a `ConfirmDialog` stating the exact count before acting (replaces list-toolbar.test.tsx); the language slot shows the current code and its accessible name names the language switched to
+- [x] T101 [US5] Implement src/ui/components/command-bar.tsx (turns T100 green); delete src/ui/components/list-toolbar.tsx and its test (superseded)
+- [x] T102 [US5] Write failing tests src/ui/views/info-view.test.tsx: focused `h2` heading (FocusHeading, WCAG 2.4.3); purpose paragraph; what is/is not stored; current version; a built-vs-planned roadmap summary; `[ back ]` calls `onBack`
+- [x] T103 [US5] Implement src/ui/views/info-view.tsx and its en/es messages (turns T102 green)
+- [x] T104 [US5] Update src/ui/app/view-reducer.test.ts then view-reducer.ts: add screen `info`; `openInfo` remembers the screen it was opened from (`returnTo`); `back` from `info` returns to it (data-model "State transitions"); existing `detail → list` back behavior (scroll position) is unchanged
 
 ### Implementation for User Story 5
 
 - [x] T105 [US5] Update tests/support/render.tsx to provide a default i18n value with a working `setLocale` (small in-memory stub) so every existing component test keeps working unchanged
-- [ ] T106 [US5] Update src/ui/app-shell.test.tsx then src/ui/app-shell.tsx: mount `CommandBar` under `AppHeader` on every screen, built from `buildNavCommands` (vault token/expired counts, current screen, `dispatch(openAdd | openInfo | back)`, `useVaultActions().clearAll/clearExpired`, `setLocale`); render `InfoView` for screen `info`
-- [ ] T107 [US5] Update src/ui/views/list-view.tsx and its test: remove `ListToolbar` (moved to the header); keep only the token count inline
+- [x] T106 [US5] Update src/ui/app-shell.test.tsx then src/ui/app-shell.tsx: mount `CommandBar` under `AppHeader` on every screen, built from `buildNavCommands` (vault token/expired counts, current screen, `dispatch(openAdd | openInfo | back)`, `useVaultActions().clearAll/clearExpired`, `setLocale`); render `InfoView` for screen `info`
+- [x] T107 [US5] Update src/ui/views/list-view.tsx and its test: remove `ListToolbar` (moved to the header); keep only the token count inline
 - [x] T108 [US5] Wire production in src/entrypoints/sidepanel/main.tsx: `SwitchableI18nProvider` (`BrowserLocalePreferenceRepository`, `loadLocaleMessages`, `detectSupportedLocale(browser.i18n.getUILanguage())`) replaces `createBrowserI18n()`; keep `document.documentElement.lang` reactive to locale changes
-- [ ] T109 [P] [US5] Add the new en/es message keys (info view, language command) to src/locales/{en,es}.yml
-- [ ] T110 [US5] Update e2e/manage-vault.spec.ts for the relocated clear commands; write e2e/always-on-bar.spec.ts (US5 AS1–AS5): bar contents per screen; info opens from list/add/detail and `[ back ]` returns to each correctly; language switch persists across a reload; clearing all from an open detail returns to the list; run `pnpm test:e2e`
+- [x] T109 [P] [US5] Add the new en/es message keys (info view, language command) to src/locales/{en,es}.yml
+- [x] T110 [US5] Update e2e/manage-vault.spec.ts for the relocated clear commands; write e2e/always-on-bar.spec.ts (US5 AS1–AS5): bar contents per screen; info opens from list/add/detail and `[ back ]` returns to each correctly; language switch persists across a reload; clearing all from an open detail returns to the list; run `pnpm test:e2e`
 - [ ] T111 [US5] Update DESIGN.md ("Command bar", "Info view") and README.md (mention the persistent bar and info view in Usage) for this addition
 
 **Checkpoint**: every action from US1–US4 is reachable from one persistent bar; info and language

@@ -76,8 +76,10 @@ async function auditAllScreens(page: Page, extensionId: string, language: 'en' |
   await auditDetail(1);
   await auditDetail(2);
 
+  // "delete" is exact: since US5 the persistent bar's "clear expired"/"clear all" are on every
+  // screen too, and their names would otherwise also match a fuzzy "delete" ("borrar ...").
   await page.getByRole('list').getByRole('button').first().click();
-  await page.getByRole('button', { name: names.delete }).click();
+  await page.getByRole('button', { name: names.delete, exact: true }).click();
   await expectNoViolations(page, 'undo toast');
 
   await page.getByRole('button', { name: names.clearAll }).click();
@@ -103,9 +105,13 @@ for (const language of ['en', 'es'] as const) {
 test('US1–US4 work with the keyboard alone at 320px (FR-026)', async ({ page, extensionId }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto(`chrome-extension://${extensionId}/sidepanel.html`);
+  // `goto` resolves on load, not on React hydration; wait for the app before the first Tab so a
+  // slow start under load never gets mistaken for a wrong tab order.
+  const addToken = page.getByRole('button', { name: 'add token' });
+  await addToken.waitFor();
 
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'add token' })).toBeFocused();
+  await expect(addToken).toBeFocused();
   await page.keyboard.press('Enter');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('textbox', { name: 'Token' })).toBeFocused();

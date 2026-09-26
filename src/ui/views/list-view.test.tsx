@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import type { TokenRecord } from '@/domain/vault/token-record';
 
-import { expired3d, expiringIn30s, NOW, valid1h } from '../../../tests/fixtures/tokens';
+import { expiringIn30s, NOW, valid1h } from '../../../tests/fixtures/tokens';
 import { FixedClock } from '../../../tests/support/in-memory-ports';
 import { renderWithProviders } from '../../../tests/support/render';
 import { ListView } from './list-view';
@@ -17,20 +17,12 @@ const record = (id: string, raw: string, label: string): TokenRecord => ({
   addedAt: 0,
 });
 
-type Outcome = { ok: true } | { ok: false; message: string };
-
-function handlers(outcome?: Outcome) {
-  const result: Outcome = outcome ?? { ok: true };
-  return {
-    onOpen: vi.fn<(id: string, listScroll: number) => void>(),
-    onAdd: vi.fn<() => void>(),
-    onClearAll: vi.fn<() => Promise<Outcome>>().mockResolvedValue(result),
-    onClearExpired: vi.fn<() => Promise<Outcome>>().mockResolvedValue(result),
-  };
+function handlers() {
+  return { onOpen: vi.fn<(id: string, listScroll: number) => void>() };
 }
 
-function show(tokens: readonly TokenRecord[], clock = new FixedClock(NOW), outcome?: Outcome) {
-  const props = handlers(outcome);
+function show(tokens: readonly TokenRecord[], clock = new FixedClock(NOW)) {
+  const props = handlers();
   const view = renderWithProviders(<ListView tokens={tokens} initialScroll={0} {...props} />, {
     clock,
   });
@@ -74,14 +66,10 @@ describe('ListView (US2)', () => {
     vi.useRealTimers();
   });
 
-  it('explains the tool and offers to add a token when empty (FR-012)', async () => {
-    const user = userEvent.setup();
-    const { onAdd } = show([]);
+  it('explains the tool when empty; adding is offered by the persistent command bar (FR-012)', () => {
+    show([]);
 
     expect(screen.getByText(/Paste a JWT to see who issued it/u)).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'add token' }));
-
-    expect(onAdd).toHaveBeenCalledOnce();
   });
 
   it('opens a token by click or Enter, reporting the scroll position', async () => {
@@ -105,53 +93,5 @@ describe('ListView (US2)', () => {
     );
 
     expect(scrollTo).toHaveBeenCalledWith(0, 240);
-  });
-
-  describe('toolbar (US4)', () => {
-    it('offers clearing expired tokens only when there are some (FR-023)', () => {
-      show([record('a', valid1h, 'Live')]);
-
-      expect(screen.queryByRole('button', { name: 'clear expired' })).not.toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'clear all' })).toBeInTheDocument();
-    });
-
-    it('clears expired tokens after confirming how many (US4 AS7)', async () => {
-      const user = userEvent.setup();
-      const { onClearExpired } = show([
-        record('a', valid1h, 'Live'),
-        record('b', expired3d, 'Old'),
-      ]);
-
-      await user.click(screen.getByRole('button', { name: 'clear expired' }));
-      expect(screen.getByRole('dialog', { name: 'Remove 1 expired token?' })).toBeInTheDocument();
-      await user.click(screen.getByRole('button', { name: 'remove' }));
-
-      expect(onClearExpired).toHaveBeenCalledOnce();
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    });
-
-    it('clears all tokens only after confirming the count (FR-019)', async () => {
-      const user = userEvent.setup();
-      const { onClearAll } = show([record('a', valid1h, 'A'), record('b', expired3d, 'B')]);
-
-      await user.click(screen.getByRole('button', { name: 'clear all' }));
-      expect(screen.getByRole('dialog', { name: 'Remove 2 tokens?' })).toBeInTheDocument();
-      await user.click(screen.getByRole('button', { name: 'cancel' }));
-      expect(onClearAll).not.toHaveBeenCalled();
-
-      await user.click(screen.getByRole('button', { name: 'clear all' }));
-      await user.click(screen.getByRole('button', { name: 'remove' }));
-      expect(onClearAll).toHaveBeenCalledOnce();
-    });
-
-    it('explains a storage failure', async () => {
-      const user = userEvent.setup();
-      show([record('a', valid1h, 'A')], new FixedClock(NOW), { ok: false, message: 'Nope.' });
-
-      await user.click(screen.getByRole('button', { name: 'clear all' }));
-      await user.click(screen.getByRole('button', { name: 'remove' }));
-
-      expect(screen.getByRole('alert')).toHaveTextContent('Nope.');
-    });
   });
 });
