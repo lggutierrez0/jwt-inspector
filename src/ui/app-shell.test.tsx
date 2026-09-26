@@ -6,6 +6,20 @@ import { InMemoryVaultRepository } from '../../tests/support/in-memory-ports';
 import { renderWithProviders } from '../../tests/support/render';
 import { AppShell } from './app-shell';
 
+const saved = () =>
+  new InMemoryVaultRepository({
+    tokens: [
+      {
+        id: 'a',
+        raw: valid1h,
+        kind: 'jws',
+        label: 'Session',
+        source: { kind: 'manual' },
+        addedAt: 0,
+      },
+    ],
+  });
+
 describe('AppShell', () => {
   it('shows the product name as the main heading', () => {
     renderWithProviders(<AppShell version="1.2.3" />);
@@ -164,5 +178,74 @@ describe('AppShell', () => {
 
     expect(scrollTo).toHaveBeenLastCalledWith(0, 180);
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
+  });
+
+  describe('managing the vault (US4)', () => {
+    it('renames a token and shows the new label everywhere (US4 AS1)', async () => {
+      const user = userEvent.setup();
+      const repository = saved();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository });
+
+      await user.click(await screen.findByRole('button', { name: /Session/u }));
+      await user.click(screen.getByRole('button', { name: 'rename' }));
+      await user.clear(screen.getByRole('textbox', { name: 'Label' }));
+      await user.type(screen.getByRole('textbox', { name: 'Label' }), 'Staging{Enter}');
+      await user.click(await screen.findByRole('button', { name: 'back' }));
+
+      expect(await screen.findByRole('button', { name: /Staging/u })).toBeInTheDocument();
+      expect(repository.state.tokens[0]?.label).toBe('Staging');
+    });
+
+    it('rejects an invalid label and keeps the old one', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository: saved() });
+
+      await user.click(await screen.findByRole('button', { name: /Session/u }));
+      await user.click(screen.getByRole('button', { name: 'rename' }));
+      await user.clear(screen.getByRole('textbox', { name: 'Label' }));
+      await user.type(screen.getByRole('textbox', { name: 'Label' }), `${'x'.repeat(61)}{Enter}`);
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Use 60 characters or fewer.');
+    });
+
+    it('deletes a token and restores it with undo (US4 AS2)', async () => {
+      const user = userEvent.setup();
+      const repository = saved();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository });
+
+      await user.click(await screen.findByRole('button', { name: /Session/u }));
+      await user.click(screen.getByRole('button', { name: 'delete' }));
+
+      expect(await screen.findByText('Token deleted.')).toBeInTheDocument();
+      expect(repository.state.tokens).toHaveLength(0);
+      await user.click(screen.getByRole('button', { name: 'undo' }));
+
+      expect(await screen.findByRole('button', { name: /Session/u })).toBeInTheDocument();
+      expect(repository.state.tokens).toHaveLength(1);
+    });
+
+    it('stays on the token when deleting cannot be saved', async () => {
+      const user = userEvent.setup();
+      const repository = saved();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository });
+      await user.click(await screen.findByRole('button', { name: /Session/u }));
+
+      repository.failNextSave = { ok: false, reason: 'quota' };
+      await user.click(screen.getByRole('button', { name: 'delete' }));
+
+      expect(await screen.findByRole('alert')).toHaveTextContent("The change couldn't be saved.");
+      expect(screen.getByRole('region', { name: 'Token summary' })).toBeInTheDocument();
+    });
+
+    it('clears all tokens after confirmation (FR-019)', async () => {
+      const user = userEvent.setup();
+      const repository = saved();
+      renderWithProviders(<AppShell version="1.2.3" />, { repository });
+
+      await user.click(await screen.findByRole('button', { name: 'clear all' }));
+      await user.click(screen.getByRole('button', { name: 'remove' }));
+
+      expect(await screen.findByText('No tokens yet')).toBeInTheDocument();
+    });
   });
 });

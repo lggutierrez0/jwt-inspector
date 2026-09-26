@@ -4,33 +4,46 @@ import { type BrowserContext, type Page, test as base, chromium } from '@playwri
 
 const extensionPath = path.resolve(import.meta.dirname, '../.output/chrome-mv3');
 
+/**
+ * Launches Chromium with the built extension. An empty `userDataDir` is a throwaway profile; a
+ * fixed one survives close and relaunch, like a real browser restart.
+ */
+export async function launchExtension(userDataDir = '') {
+  // Pin the browser language: extension messages follow the OS locale, not the page locale.
+  const context = await chromium.launchPersistentContext(userDataDir, {
+    channel: 'chromium',
+    locale: 'en-US',
+    env: { ...process.env, LANGUAGE: 'en_US', LANG: 'en_US.UTF-8', LC_ALL: 'en_US.UTF-8' },
+    args: [
+      '--lang=en-US',
+      `--disable-extensions-except=${extensionPath}`,
+      `--load-extension=${extensionPath}`,
+    ],
+  });
+  const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent('serviceworker'));
+  return { context, extensionId: new URL(worker.url()).host };
+}
+
 interface ExtensionFixtures {
   readonly context: BrowserContext;
   readonly extensionId: string;
 }
 
-/** Launches Chromium with the built extension loaded and exposes its runtime id. */
-export const test = base.extend<ExtensionFixtures>({
+/** Test with a fresh profile and the extension's runtime id. */
+export const test = base.extend<
+  ExtensionFixtures & { launched: Awaited<ReturnType<typeof launchExtension>> }
+>({
   // oxlint-disable-next-line no-empty-pattern -- Playwright requires the destructuring signature
-  context: async ({}, use) => {
-    // Pin the browser language: extension messages follow the OS locale, not the page locale.
-    const context = await chromium.launchPersistentContext('', {
-      channel: 'chromium',
-      locale: 'en-US',
-      env: { ...process.env, LANGUAGE: 'en_US', LANG: 'en_US.UTF-8', LC_ALL: 'en_US.UTF-8' },
-      args: [
-        '--lang=en-US',
-        `--disable-extensions-except=${extensionPath}`,
-        `--load-extension=${extensionPath}`,
-      ],
-    });
-    await use(context);
-    await context.close();
+  launched: async ({}, use) => {
+    const launched = await launchExtension();
+    await use(launched);
+    await launched.context.close();
   },
-  extensionId: async ({ context }, use) => {
-    const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent('serviceworker'));
-    const id = new URL(worker.url()).host;
-    await use(id);
+  context: async ({ launched }, use) => {
+    await use(launched.context);
+  },
+  extensionId: async ({ launched }, use) => {
+    await use(launched.extensionId);
   },
 });
 

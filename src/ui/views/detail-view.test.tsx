@@ -28,10 +28,21 @@ const record = (raw: string, overrides: Partial<TokenRecord> = {}): TokenRecord 
   ...overrides,
 });
 
-function show(raw: string, overrides: Partial<TokenRecord> = {}) {
-  const onBack = vi.fn<() => void>();
-  const view = renderWithProviders(<DetailView record={record(raw, overrides)} onBack={onBack} />);
-  return { ...view, onBack };
+type Outcome = { ok: true } | { ok: false; message: string };
+
+function actions(deleteOutcome?: Outcome) {
+  const result: Outcome = deleteOutcome ?? { ok: true };
+  return {
+    onBack: vi.fn<() => void>(),
+    onRename: vi.fn<(label: string) => Promise<Outcome>>().mockResolvedValue({ ok: true }),
+    onDelete: vi.fn<() => Promise<Outcome>>().mockResolvedValue(result),
+  };
+}
+
+function show(raw: string, overrides: Partial<TokenRecord> = {}, deleteOutcome?: Outcome) {
+  const handlers = actions(deleteOutcome);
+  const view = renderWithProviders(<DetailView record={record(raw, overrides)} {...handlers} />);
+  return { ...view, ...handlers };
 }
 
 const follows = (first: Element, second: Element) =>
@@ -39,9 +50,7 @@ const follows = (first: Element, second: Element) =>
 
 function showWithClipboard(raw: string) {
   const clipboard = new RecordingClipboard();
-  renderWithProviders(<DetailView record={record(raw)} onBack={vi.fn<() => void>()} />, {
-    clipboard,
-  });
+  renderWithProviders(<DetailView record={record(raw)} {...actions()} />, { clipboard });
   return { clipboard, user: userEvent.setup() };
 }
 
@@ -161,7 +170,7 @@ describe('DetailView (US1, FR-013)', () => {
 
   it('shows the already-saved notice when asked to', () => {
     renderWithProviders(
-      <DetailView record={record(valid1h)} notice="alreadySaved" onBack={vi.fn<() => void>()} />,
+      <DetailView record={record(valid1h)} notice="alreadySaved" {...actions()} />,
     );
 
     expect(screen.getByText(/This token was already saved/u)).toBeInTheDocument();
@@ -216,5 +225,37 @@ describe('DetailView (US1, FR-013)', () => {
     show(withPersonalClaims);
 
     expect(screen.queryByText('maria@example.test')).not.toBeInTheDocument();
+  });
+
+  describe('managing the token (US4)', () => {
+    it('renames inline (US4 AS1)', async () => {
+      const user = userEvent.setup();
+      const { onRename } = show(valid1h);
+
+      await user.click(screen.getByRole('button', { name: 'rename' }));
+      await user.clear(screen.getByRole('textbox', { name: 'Label' }));
+      await user.type(screen.getByRole('textbox', { name: 'Label' }), 'Staging{Enter}');
+
+      expect(onRename).toHaveBeenCalledWith('Staging');
+    });
+
+    it('deletes the token (FR-018)', async () => {
+      const user = userEvent.setup();
+      const { onDelete } = show(valid1h);
+
+      await user.click(screen.getByRole('button', { name: 'delete' }));
+
+      expect(onDelete).toHaveBeenCalledOnce();
+    });
+
+    it('explains a storage failure and stays on the token', async () => {
+      const user = userEvent.setup();
+      show(valid1h, {}, { ok: false, message: "The change couldn't be saved." });
+
+      await user.click(screen.getByRole('button', { name: 'delete' }));
+
+      expect(screen.getByRole('alert')).toHaveTextContent("The change couldn't be saved.");
+      expect(screen.getByRole('region', { name: 'Token summary' })).toBeInTheDocument();
+    });
   });
 });

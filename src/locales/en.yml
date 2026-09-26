@@ -186,3 +186,28 @@ copy:
   token: token
   headerJson: header JSON
   payloadJson: payload JSON
+label:
+  rename: rename
+  field: Label
+  save: save
+  cancel: cancel
+  errors:
+    empty: The label can't be empty.
+    tooLong: Use 60 characters or fewer.
+    saveFailed: The label couldn't be saved. Browser storage is full or unavailable.
+remove:
+  delete: delete
+  deleted: Token deleted.
+  undo: undo
+  failed: The change couldn't be saved. Browser storage is full or unavailable.
+  clearAll: clear all
+  clearExpired: clear expired
+  confirm: remove
+  cancel: cancel
+  irreversible: This can't be undone.
+  confirmAll:
+    1: Remove 1 token?
+    n: Remove $1 tokens?
+  confirmExpired:
+    1: Remove 1 expired token?
+    n: Remove $1 expired tokens?

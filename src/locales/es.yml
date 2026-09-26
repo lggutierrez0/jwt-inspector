@@ -186,3 +186,28 @@ copy:
   token: token
   headerJson: JSON del header
   payloadJson: JSON del payload
+label:
+  rename: renombrar
+  field: Etiqueta
+  save: guardar
+  cancel: cancelar
+  errors:
+    empty: La etiqueta no puede estar vacía.
+    tooLong: Usa 60 caracteres o menos.
+    saveFailed: No se pudo guardar la etiqueta. El almacenamiento del navegador está lleno o no disponible.
+remove:
+  delete: borrar
+  deleted: Token borrado.
+  undo: deshacer
+  failed: No se pudo guardar el cambio. El almacenamiento del navegador está lleno o no disponible.
+  clearAll: borrar todo
+  clearExpired: borrar expirados
+  confirm: borrar
+  cancel: cancelar
+  irreversible: Esto no se puede deshacer.
+  confirmAll:
+    1: ¿Borrar 1 token?
+    n: ¿Borrar $1 tokens?
+  confirmExpired:
+    1: ¿Borrar 1 token expirado?
+    n: ¿Borrar $1 tokens expirados?

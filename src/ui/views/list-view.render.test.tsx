@@ -41,6 +41,8 @@ describe('ListView rendering cost (supports SC-004)', () => {
         initialScroll={0}
         onOpen={vi.fn<(id: string, listScroll: number) => void>()}
         onAdd={vi.fn<() => void>()}
+        onClearAll={vi.fn<() => Promise<{ ok: true }>>()}
+        onClearExpired={vi.fn<() => Promise<{ ok: true }>>()}
       />,
       { clock },
     );

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, Ref } from 'react';
 
 type Tone = 'default' | 'primary' | 'danger';
 
@@ -6,6 +6,7 @@ interface CommandProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'ch
   /** Visible command word, e.g. "copy"; brackets are drawn around it. */
   readonly label: string;
   readonly tone?: Tone;
+  readonly ref?: Ref<HTMLButtonElement>;
 }
 
 const TONES: Record<Tone, string> = {

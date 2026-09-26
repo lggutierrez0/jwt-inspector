@@ -196,21 +196,21 @@ clipboard contents (quickstart "mask-reveal-copy").
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T070 [P] [US4] Write failing tests src/domain/vault/label.test.ts for `validateLabel(input)`: trims; "1–60 characters after trimming" (FR-017) → `invalidLabel { reason: 'empty' | 'tooLong' }`
-- [ ] T071 [US4] Write failing tests src/application/vault/manage-vault.test.ts: `renameToken` (`renamed`, `invalidLabel`, `notFound`, `saveFailed`); `deleteToken` returns `deleted { record, index }`; `restoreToken(record, index)` reinserts at the original index or reports `duplicate`; `clearAll` → `cleared { count }`; `clearExpired(now)` removes only expired tokens (FR-023) and never touches others; tokens are never removed automatically
-- [ ] T072 [P] [US4] Write failing component tests src/ui/components/inline-label-editor.test.tsx: `[ rename ]` enters edit mode with the current label selected; Enter saves, Esc cancels; invalid labels show the reason and keep the previous label (US4 AS1)
-- [ ] T073 [P] [US4] Write failing component tests src/ui/components/undo-toast.test.tsx (fake timers): shows for 5 seconds with `[ undo ]`, calls restore once, dismisses itself, is announced politely (US4 AS2, FR-018)
-- [ ] T074 [P] [US4] Write failing component tests src/ui/components/confirm-dialog.test.tsx: native `<dialog>` with focus trapped on open, returns focus on close, states the exact count ("Remove 3 tokens?"), confirm and cancel paths (FR-019, FR-023)
+- [x] T070 [P] [US4] Write failing tests src/domain/vault/label.test.ts for `validateLabel(input)`: trims; "1–60 characters after trimming" (FR-017) → `invalidLabel { reason: 'empty' | 'tooLong' }`
+- [x] T071 [US4] Write failing tests src/application/vault/manage-vault.test.ts: `renameToken` (`renamed`, `invalidLabel`, `notFound`, `saveFailed`); `deleteToken` returns `deleted { record, index }`; `restoreToken(record, index)` reinserts at the original index or reports `duplicate`; `clearAll` → `cleared { count }`; `clearExpired(now)` removes only expired tokens (FR-023) and never touches others; tokens are never removed automatically
+- [x] T072 [P] [US4] Write failing component tests src/ui/components/inline-label-editor.test.tsx: `[ rename ]` enters edit mode with the current label selected; Enter saves, Esc cancels; invalid labels show the reason and keep the previous label (US4 AS1)
+- [x] T073 [P] [US4] Write failing component tests src/ui/components/undo-toast.test.tsx (fake timers): shows for 5 seconds with `[ undo ]`, calls restore once, dismisses itself, is announced politely (US4 AS2, FR-018)
+- [x] T074 [P] [US4] Write failing component tests src/ui/components/confirm-dialog.test.tsx: native `<dialog>` with focus trapped on open, returns focus on close, states the exact count ("Remove 3 tokens?"), confirm and cancel paths (FR-019, FR-023)
 
 ### Implementation for User Story 4
 
-- [ ] T075 [P] [US4] Implement src/domain/vault/label.ts (turns T070 green)
-- [ ] T076 [US4] Implement src/application/vault/rename-token.ts, delete-token.ts, restore-token.ts, clear-all.ts and clear-expired.ts in that folder (turns T071 green)
-- [ ] T077 [P] [US4] Implement src/ui/components/inline-label-editor.tsx (turns T072 green)
-- [ ] T078 [P] [US4] Implement src/ui/components/undo-toast.tsx (turns T073 green)
-- [ ] T079 [P] [US4] Implement src/ui/components/confirm-dialog.tsx (turns T074 green)
-- [ ] T080 [US4] Extend view tests first (including a `saveFailed` result showing a storage error and leaving the view unchanged), then wire rename and `[ delete ]` into src/ui/views/detail-view.tsx, and `[ clear expired ]` (only when any expired) / `[ clear all ]` into the toolbar of src/ui/views/list-view.tsx
-- [ ] T081 [US4] Write E2E journeys e2e/manage-vault.spec.ts (rename, undo within 5s, clear expired, clear all) and e2e/persistence-and-isolation.spec.ts (reload and browser-context restart keep tokens, labels, order; a second panel page sees changes; a web page cannot read the vault; nothing in `storage.sync`) using a fixture variant with a fixed `userDataDir` per test that closes and relaunches the same profile (e2e/fixtures.ts), and run them
+- [x] T075 [P] [US4] Implement src/domain/vault/label.ts (turns T070 green)
+- [x] T076 [US4] Implement src/application/vault/rename-token.ts, delete-token.ts, restore-token.ts, clear-all.ts and clear-expired.ts in that folder (turns T071 green)
+- [x] T077 [P] [US4] Implement src/ui/components/inline-label-editor.tsx (turns T072 green)
+- [x] T078 [P] [US4] Implement src/ui/components/undo-toast.tsx (turns T073 green)
+- [x] T079 [P] [US4] Implement src/ui/components/confirm-dialog.tsx (turns T074 green)
+- [x] T080 [US4] Extend view tests first (including a `saveFailed` result showing a storage error and leaving the view unchanged), then wire rename and `[ delete ]` into src/ui/views/detail-view.tsx, and `[ clear expired ]` (only when any expired) / `[ clear all ]` into the toolbar of src/ui/views/list-view.tsx
+- [x] T081 [US4] Write E2E journeys e2e/manage-vault.spec.ts (rename, undo within 5s, clear expired, clear all) and e2e/persistence-and-isolation.spec.ts (reload and browser-context restart keep tokens, labels, order; a second panel page sees changes; a web page cannot read the vault; nothing in `storage.sync`) using a fixture variant with a fixed `userDataDir` per test that closes and relaunches the same profile (e2e/fixtures.ts), and run them
 
 ---
 

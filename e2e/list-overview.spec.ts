@@ -30,7 +30,10 @@ test.describe('US2 see all my tokens and their remaining life', () => {
       record(1, makeJws({ payload: { sub: 'oldest', exp: seconds(now - H) } }), 'Oldest'),
     ]);
 
-    const lines = page.getByRole('region', { name: 'Saved tokens' }).getByRole('button');
+    const lines = page
+      .getByRole('region', { name: 'Saved tokens' })
+      .getByRole('list')
+      .getByRole('button');
     await expect(lines).toHaveCount(2);
     await expect(lines.nth(0)).toContainText('Newest');
     await expect(lines.nth(1)).toContainText('Expired');
@@ -67,7 +70,11 @@ test.describe('US2 see all my tokens and their remaining life', () => {
     );
     await seed(page, tokens);
 
-    const first = page.getByRole('region', { name: 'Saved tokens' }).getByRole('button').first();
+    const first = page
+      .getByRole('region', { name: 'Saved tokens' })
+      .getByRole('list')
+      .getByRole('button')
+      .first();
     await first.waitFor();
     const elapsed = await page.evaluate(() => performance.now());
     await first.click({ trial: true });

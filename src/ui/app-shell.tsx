@@ -3,9 +3,12 @@ import { useCallback, useReducer } from 'react';
 import { findById } from '@/domain/vault/token-record';
 
 import { useRemovedTokenGuard } from './app/use-removed-token-guard';
+import { useUndoableDelete } from './app/use-undoable-delete';
 import { useVault } from './app/use-vault';
+import { useVaultActions } from './app/use-vault-actions';
 import { INITIAL_VIEW, viewReducer } from './app/view-reducer';
 import { Command } from './components/command';
+import { UndoToast } from './components/undo-toast';
 import { useI18n } from './i18n/i18n-context';
 import { AddTokenView } from './views/add-token-view';
 import { DetailView } from './views/detail-view';
@@ -65,6 +68,12 @@ export function AppShell({ version }: AppShellProps) {
   const openDetail = useCallback((id: string, listScroll: number) => {
     dispatch({ type: 'openDetail', id, listScroll });
   }, []);
+  const back = useCallback(() => {
+    dispatch({ type: 'back' });
+  }, []);
+  const { deleted, onDeleted, dismiss: dismissUndo } = useUndoableDelete(dispatch);
+  const actions = useVaultActions(onDeleted);
+
   // The empty state carries the only "add token" action (one action per intent).
   const hasTokens = vault.status === 'ready' && vault.state.tokens.length > 0;
 
@@ -84,6 +93,8 @@ export function AppShell({ version }: AppShellProps) {
             initialScroll={view.listScroll}
             onOpen={openDetail}
             onAdd={openAdd}
+            onClearAll={actions.clearAll}
+            onClearExpired={actions.clearExpired}
           />
         )}
         {vault.status === 'ready' && screen.name === 'add' && (
@@ -95,9 +106,7 @@ export function AppShell({ version }: AppShellProps) {
                   : { type: 'openDetail', id, notice },
               );
             }}
-            onCancel={() => {
-              dispatch({ type: 'back' });
-            }}
+            onCancel={back}
           />
         )}
         {openRecord !== undefined && screen.name === 'detail' && (
@@ -105,12 +114,21 @@ export function AppShell({ version }: AppShellProps) {
             key={openRecord.id}
             record={openRecord}
             {...(screen.notice === undefined ? {} : { notice: screen.notice })}
-            onBack={() => {
-              dispatch({ type: 'back' });
-            }}
+            onBack={back}
+            onRename={(label) => actions.rename(openRecord.id, label)}
+            onDelete={() => actions.remove(openRecord.id)}
           />
         )}
       </main>
+      {deleted !== null && (
+        <UndoToast
+          key={deleted.record.id}
+          onUndo={() => {
+            void actions.restore(deleted);
+          }}
+          onDismiss={dismissUndo}
+        />
+      )}
     </div>
   );
 }
