@@ -19,6 +19,11 @@ export default defineConfig({
     permissions: ['storage', 'activeTab', ...(browser === 'firefox' ? [] : ['sidePanel'])],
     optional_host_permissions: ['<all_urls>'],
     action: { default_title: '__MSG_extName__' },
+    // Explicit and stricter than the MV3 default (research R13). WXT adds its dev server in dev mode.
+    content_security_policy: {
+      extension_pages:
+        "script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+    },
     ...(browser === 'firefox' && {
       browser_specific_settings: {
         gecko: {

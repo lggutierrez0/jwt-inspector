@@ -8,7 +8,9 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./tests/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'tests/**/*.test.ts'],
+    // Deterministic dates: every formatted time in tests is UTC.
+    env: { TZ: 'UTC' },
     restoreMocks: true,
     coverage: {
       provider: 'v8',

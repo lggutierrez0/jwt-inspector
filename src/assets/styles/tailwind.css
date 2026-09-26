@@ -1,21 +1,94 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/martian-mono/standard.css';
 
 /*
- * Design tokens. Placeholder palette for the foundation only: the real visual
- * identity is defined in DESIGN.md during the UI feature, then mirrored here.
+ * Design tokens mirrored 1:1 from DESIGN.md. Components use these tokens only.
+ * Light values live in @theme; dark values override the same variables below.
  */
 @theme {
-  --color-surface: oklch(0.99 0 0);
-  --color-ink: oklch(0.22 0.01 260);
-  --color-ink-muted: oklch(0.5 0.01 260);
-  --color-line: oklch(0.92 0.005 260);
+  --font-mono: 'Martian Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+  --font-sans: var(--font-mono);
+
+  --color-surface: oklch(0.985 0.004 250);
+  --color-surface-raised: oklch(1 0 0);
+  --color-surface-sunken: oklch(0.955 0.006 250);
+  --color-ink: oklch(0.24 0.03 265);
+  --color-ink-muted: oklch(0.48 0.025 262);
+  --color-line: oklch(0.9 0.008 255);
+  --color-line-strong: oklch(0.62 0.02 258);
+  --color-part-header: oklch(0.52 0.2 355);
+  --color-part-payload: oklch(0.5 0.2 290);
+  --color-part-signature: oklch(0.5 0.1 205);
+  --color-status-valid: oklch(0.5 0.13 150);
+  --color-status-soon: oklch(0.52 0.13 65);
+  --color-status-expired: oklch(0.52 0.19 27);
+  --color-status-future: oklch(0.5 0.14 245);
+  --color-focus: oklch(0.5 0.12 215);
+
+  --color-part-header-tint: color-mix(in oklch, var(--color-part-header) 12%, transparent);
+  --color-part-payload-tint: color-mix(in oklch, var(--color-part-payload) 12%, transparent);
+  --color-part-signature-tint: color-mix(in oklch, var(--color-part-signature) 12%, transparent);
+  --color-status-expired-tint: color-mix(in oklch, var(--color-status-expired) 12%, transparent);
+
+  --text-cite: 12px;
+  --text-cite--line-height: 16px;
+  --text-body: 13px;
+  --text-body--line-height: 20px;
+  --text-label: 13px;
+  --text-label--line-height: 20px;
+  --text-label--font-weight: 700;
+  --text-head: 14px;
+  --text-head--line-height: 20px;
+  --text-head--font-weight: 700;
+  --text-state: 22px;
+  --text-state--line-height: 26px;
+  --text-state--font-weight: 700;
+
+  --radius-control: 2px;
+  --shadow-float: 0 8px 24px -8px color-mix(in oklch, var(--color-ink) 28%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-surface: oklch(0.18 0.01 260);
-    --color-ink: oklch(0.95 0.005 260);
-    --color-ink-muted: oklch(0.7 0.01 260);
-    --color-line: oklch(0.3 0.01 260);
+    color-scheme: dark;
+    --color-surface: oklch(0.19 0.025 265);
+    --color-surface-raised: oklch(0.23 0.028 265);
+    --color-surface-sunken: oklch(0.16 0.022 265);
+    --color-ink: oklch(0.95 0.008 255);
+    --color-ink-muted: oklch(0.74 0.02 258);
+    --color-line: oklch(0.32 0.03 265);
+    --color-line-strong: oklch(0.54 0.03 262);
+    --color-part-header: oklch(0.75 0.16 355);
+    --color-part-payload: oklch(0.74 0.15 295);
+    --color-part-signature: oklch(0.8 0.11 200);
+    --color-status-valid: oklch(0.78 0.15 150);
+    --color-status-soon: oklch(0.83 0.14 80);
+    --color-status-expired: oklch(0.72 0.17 25);
+    --color-status-future: oklch(0.77 0.12 245);
+    --color-focus: oklch(0.8 0.11 210);
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0s !important;
+      animation-duration: 0s !important;
+    }
   }
 }

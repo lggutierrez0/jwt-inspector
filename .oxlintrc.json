@@ -75,7 +75,10 @@
     },
     {
       "files": ["**/*.test.ts", "**/*.test.tsx", "tests/**", "e2e/**"],
-      "rules": { "typescript/no-non-null-assertion": "off" }
+      "rules": {
+        "typescript/no-non-null-assertion": "off",
+        "eslint/max-lines-per-function": "off"
+      }
     },
     {
       "files": ["e2e/**"],
