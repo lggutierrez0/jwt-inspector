@@ -14,6 +14,11 @@ the extension; English and Spanish; JWE recognized but not supported yet."
 
 ## Clarifications
 
+### Session 2026-09-26 (implementation)
+
+- Q: FR-011 derived labels from `name`/`email`, exposing data FR-015 masks. → A: Labels use only
+  non-sensitive claims (`preferred_username`, `sub`, `iss`); constitution III prevails.
+
 ### Session 2026-09-25
 
 - Q: Which values are masked by default in the detail view? → A: The signature plus personal or
@@ -81,9 +86,10 @@ entry shows the correct label, tail, source, time remaining and total lifetime, 
 2. **Given** a listed token that is about to expire, **When** time passes while the panel is
    open, **Then** its time remaining updates without user action and switches to "Expired" at
    the moment of expiry.
-3. **Given** a token with claims such as `name`, `email`, `sub` or `iss`, **When** it is added,
-   **Then** its default label is derived from the first of those claims that is present; when
-   none is present it gets a numbered generic label (e.g. "Token 3").
+3. **Given** a token with claims such as `preferred_username`, `sub` or `iss`, **When** it is
+   added, **Then** its default label is derived from the first of those claims that is present;
+   when none is present it gets a numbered generic label (e.g. "Token 3"). Personal data such as
+   `name` or `email` is never used, because it is masked.
 4. **Given** an empty vault, **When** the user opens the panel, **Then** an empty state explains
    what the tool does and offers the "Add token" action.
 5. **Given** a list entry, **When** the user selects it (pointer or keyboard), **Then** its
@@ -205,8 +211,9 @@ vault state; verify tokens are not readable from a web page context.
   it is "Unknown" when neither is present and "Never expires" without `exp`.
 - **FR-010**: Time remaining and status MUST update live while visible, at least once per second
   when under one minute remains and at least once per minute otherwise.
-- **FR-011**: The default label MUST be the first present of `name`, `email`, `preferred_username`,
-  `sub`, `iss`; otherwise "Token N" where N is the next unused number.
+- **FR-011**: The default label MUST be the first present of `preferred_username`, `sub`, `iss`;
+  otherwise "Token N" where N is the next unused number. Claims masked by FR-015 (personal data
+  such as `name` or `email`) MUST NOT be used, because labels are always visible.
 - **FR-012**: The empty state MUST explain the purpose of the tool and offer the "Add token"
   action.
 

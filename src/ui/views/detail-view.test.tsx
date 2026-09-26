@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import type { TokenRecord } from '@/domain/vault/token-record';
 
@@ -9,9 +10,11 @@ import {
   jwe5Parts,
   noExp,
   notYetValid,
+  personalClaimsPayload,
   valid1h,
   withPersonalClaims,
 } from '../../../tests/fixtures/tokens';
+import { RecordingClipboard } from '../../../tests/support/in-memory-ports';
 import { renderWithProviders } from '../../../tests/support/render';
 import { DetailView } from './detail-view';
 
@@ -33,6 +36,14 @@ function show(raw: string, overrides: Partial<TokenRecord> = {}) {
 
 const follows = (first: Element, second: Element) =>
   (first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+function showWithClipboard(raw: string) {
+  const clipboard = new RecordingClipboard();
+  renderWithProviders(<DetailView record={record(raw)} onBack={vi.fn<() => void>()} />, {
+    clipboard,
+  });
+  return { clipboard, user: userEvent.setup() };
+}
 
 describe('DetailView (US1, FR-013)', () => {
   it('opens with the label and RFC-style front matter', () => {
@@ -162,5 +173,48 @@ describe('DetailView (US1, FR-013)', () => {
     screen.getByRole('button', { name: 'back' }).click();
 
     expect(onBack).toHaveBeenCalledOnce();
+  });
+
+  describe('copying (US3, FR-016)', () => {
+    it('copies the whole token', async () => {
+      const { clipboard, user } = showWithClipboard(valid1h);
+
+      await user.click(screen.getByRole('button', { name: 'copy token' }));
+
+      expect(clipboard.written).toEqual([valid1h]);
+    });
+
+    it('copies the header and payload JSON unmasked', async () => {
+      const { clipboard, user } = showWithClipboard(withPersonalClaims);
+
+      await user.click(screen.getByRole('button', { name: 'copy header JSON' }));
+      await user.click(screen.getByRole('button', { name: 'copy payload JSON' }));
+
+      expect(clipboard.written).toEqual([
+        JSON.stringify({ alg: 'HS256', typ: 'JWT' }, null, 2),
+        JSON.stringify(personalClaimsPayload, null, 2),
+      ]);
+    });
+
+    it('copies a single claim value, even a masked one', async () => {
+      const { clipboard, user } = showWithClipboard(withPersonalClaims);
+
+      await user.click(screen.getByRole('button', { name: 'copy email' }));
+      await user.click(screen.getByRole('button', { name: 'copy roles' }));
+
+      expect(clipboard.written).toEqual(['maria@example.test', '["admin"]']);
+    });
+  });
+
+  it('masks revealed values again when the detail is reopened (US3 AS4)', async () => {
+    const user = userEvent.setup();
+    const first = show(withPersonalClaims);
+    await user.click(screen.getByRole('button', { name: 'reveal email' }));
+    expect(screen.getByText('maria@example.test')).toBeInTheDocument();
+    first.unmount();
+
+    show(withPersonalClaims);
+
+    expect(screen.queryByText('maria@example.test')).not.toBeInTheDocument();
   });
 });

@@ -6,6 +6,7 @@ import { readTimeClaims } from '@/domain/time/time-claims';
 
 import { useNow } from '../clock/use-now';
 import { ClaimEntry } from '../components/claim-entry';
+import { CopyCommand } from '../components/copy-command';
 import { FrontMatter } from '../components/front-matter';
 import { JsonView } from '../components/json-view';
 import { Section } from '../components/section';
@@ -62,7 +63,11 @@ export function JwsDetail({ token }: { readonly token: DecodedJws }) {
           tone={status.tone === 'neutral' ? 'valid' : status.tone}
         />
       )}
-      <Section number={1} title={t('detail.sections.structure')}>
+      <Section
+        number={1}
+        title={t('detail.sections.structure')}
+        actions={<CopyCommand name={t('copy.token')} text={token.segments.join('.')} />}
+      >
         <StructureFigure segments={token.segments} />
       </Section>
       <Section number={2} title={t('detail.sections.header')}>
@@ -80,8 +85,16 @@ export function JwsDetail({ token }: { readonly token: DecodedJws }) {
         ))}
       </Section>
       <Section number={4} title={t('detail.sections.json')}>
-        <JsonView name={t('detail.jsonOf', [t('parts.header')])} value={token.header} />
-        <JsonView name={t('detail.jsonOf', [t('parts.payload')])} value={token.payload} />
+        <JsonView
+          name={t('detail.jsonOf', [t('parts.header')])}
+          copyName={t('copy.headerJson')}
+          value={token.header}
+        />
+        <JsonView
+          name={t('detail.jsonOf', [t('parts.payload')])}
+          copyName={t('copy.payloadJson')}
+          value={token.payload}
+        />
       </Section>
     </>
   );

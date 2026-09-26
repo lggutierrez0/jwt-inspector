@@ -177,3 +177,12 @@ list:
 empty:
   title: Todavía no hay tokens
   body: Pega un JWT para ver quién lo emitió, qué declara y cuánto tiempo sigue siendo válido. Los tokens se guardan solo en este navegador, privados para la extensión.
+copy:
+  label: copiar
+  field: copiar $1
+  copied: copiado
+  announce: $1 copiado
+  failed: No se pudo copiar al portapapeles. Selecciona el texto y cópialo a mano.
+  token: token
+  headerJson: JSON del header
+  payloadJson: JSON del payload

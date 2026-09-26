@@ -94,9 +94,9 @@ claims only and a warning is attached.
 
 ### DefaultLabel
 
-First non-empty string among `name`, `email`, `preferred_username`, `sub`, `iss`, truncated to
-60 chars; otherwise `Token N` with the smallest N ≥ 1 not used by an existing `Token N` label
-(FR-011).
+First non-empty string among `preferred_username`, `sub`, `iss`, truncated to 60 chars; otherwise
+`Token N` with the smallest N ≥ 1 not used by an existing `Token N` label (FR-011). Personal data
+(`name`, `email`, …) is never used: labels are always visible and FR-015 masks that data.
 
 ### Sensitivity
 

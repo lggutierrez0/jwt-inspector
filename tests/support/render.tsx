@@ -7,12 +7,18 @@ import { ClockContext } from '@/ui/clock/use-now';
 import { createBrowserI18n, I18nContext } from '@/ui/i18n/i18n-context';
 
 import { NOW } from '../fixtures/tokens';
-import { FixedClock, InMemoryVaultRepository, SequentialIdGenerator } from './in-memory-ports';
+import {
+  FixedClock,
+  InMemoryVaultRepository,
+  RecordingClipboard,
+  SequentialIdGenerator,
+} from './in-memory-ports';
 
 export interface TestServices {
   readonly repository: InMemoryVaultRepository;
   readonly clock: FixedClock;
   readonly ids: SequentialIdGenerator;
+  readonly clipboard: RecordingClipboard;
 }
 
 export function createTestServices(overrides: Partial<TestServices> = {}): TestServices {
@@ -20,6 +26,7 @@ export function createTestServices(overrides: Partial<TestServices> = {}): TestS
     repository: overrides.repository ?? new InMemoryVaultRepository(),
     clock: overrides.clock ?? new FixedClock(NOW),
     ids: overrides.ids ?? new SequentialIdGenerator(),
+    clipboard: overrides.clipboard ?? new RecordingClipboard(),
   };
 }
 

@@ -3,6 +3,7 @@ import { MASKED, redactSensitive } from '@/domain/claims/sensitivity';
 import type { JsonValue } from '@/domain/jwt/types';
 
 import { useI18n, type Translate } from '../i18n/i18n-context';
+import { CopyCommand } from './copy-command';
 import { MaskedValue } from './masked-value';
 
 type ClaimEntryProps = {
@@ -46,9 +47,12 @@ export function ClaimEntry(props: ClaimEntryProps) {
 
   return (
     <div className="flex flex-col gap-1 border-b border-line py-3">
-      <div className="flex flex-wrap items-baseline gap-x-3">
-        <span className={`text-label ${PART_COLOR[part]}`}>&quot;{name}&quot;</span>
-        {text !== null && <span>{text.title}</span>}
+      <div className="flex items-baseline justify-between gap-x-3">
+        <span className="flex min-w-0 flex-wrap items-baseline gap-x-3">
+          <span className={`text-label ${PART_COLOR[part]}`}>&quot;{name}&quot;</span>
+          {text !== null && <span>{text.title}</span>}
+        </span>
+        <CopyCommand name={name} text={typeof value === 'string' ? value : JSON.stringify(value)} />
       </div>
       {text !== null && <p className="text-cite text-ink-muted">{text.summary}</p>}
       <div className="break-all font-stretch-condensed">

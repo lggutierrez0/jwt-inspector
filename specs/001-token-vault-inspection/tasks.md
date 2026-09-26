@@ -115,7 +115,7 @@ the exact message and saves nothing; valid tokens open a correct detail with mas
 
 ### Tests for User Story 1 (write first, see them fail) ⚠️
 
-- [x] T040 [P] [US1] Write failing tests src/domain/claims/default-label.test.ts: "First non-empty string among `name`, `email`, `preferred_username`, `sub`, `iss`, truncated to 60 chars; otherwise `Token N` with the smallest N ≥ 1 not used by an existing `Token N` label" (FR-011)
+- [x] T040 [P] [US1] Write failing tests src/domain/claims/default-label.test.ts: "First non-empty string among `preferred_username`, `sub`, `iss` (never masked personal data, see spec clarification 2026-09-26), truncated to 60 chars; otherwise `Token N` with the smallest N ≥ 1 not used by an existing `Token N` label" (FR-011)
 - [x] T041 [P] [US1] Write failing tests src/domain/claims/claim-catalog.test.ts: registered claims `iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti` map to an i18n explanation key and citation `RFC 7519, Section 4.1.1`–`4.1.7`; header params `alg`, `jku`, `jwk`, `kid`, `x5u`, `x5c`, `x5t`, `x5t#S256`, `typ`, `cty`, `crit` map to `RFC 7515, Section 4.1.1`–`4.1.11`; OpenID personal claims cite `OpenID Connect Core 1.0, Section 5.1`; unknown names → `custom` (FR-014)
 - [x] T042 [US1] Write failing tests src/application/vault/add-token.test.ts with in-memory ports: `added { record }` (source `manual`, default label, `addedAt` from clock, prepended); `duplicate { id }` for an exact normalized match; JWE → `unsupportedJwe { record }` saved with `kind: 'jwe'`; malformed or over 64 KiB → `invalid { error }` and nothing saved; repository failure → `saveFailed`
 - [x] T043 [P] [US1] Write failing component tests src/ui/views/add-token-view.test.tsx: labeled textarea "Token" (label above, helper text, error below), submit via `[ add token ]` and Enter (Shift+Enter inserts newline); each `DecodeError` (including `tooLarge`) shows its specific en/es message in an element with `role="alert"`; a repository `saveFailed` shows a storage error message and keeps the input; success navigates to detail; duplicate navigates to the existing detail with the "already saved" notice
@@ -176,15 +176,15 @@ clipboard contents (quickstart "mask-reveal-copy").
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T064 [P] [US3] Write failing component tests src/ui/components/copy-command.test.tsx: writes the exact unmasked text through the Clipboard port, shows `[ copied ]` for 1.2s with a polite live-region announcement, shows an error message when the port returns `{ ok: false }`
-- [ ] T065 [P] [US3] Write failing test src/infrastructure/clipboard/navigator-clipboard.test.ts: delegates to `navigator.clipboard.writeText`, maps rejection to `{ ok: false }`
+- [x] T064 [P] [US3] Write failing component tests src/ui/components/copy-command.test.tsx: writes the exact unmasked text through the Clipboard port, shows `[ copied ]` for 1.2s with a polite live-region announcement, shows an error message when the port returns `{ ok: false }`
+- [x] T065 [P] [US3] Write failing test src/infrastructure/clipboard/navigator-clipboard.test.ts: delegates to `navigator.clipboard.writeText`, maps rejection to `{ ok: false }`
 
 ### Implementation for User Story 3
 
-- [ ] T066 [P] [US3] Implement src/ui/components/copy-command.tsx (turns T064 green)
-- [ ] T067 [P] [US3] Implement src/infrastructure/clipboard/navigator-clipboard.ts and wire it in src/entrypoints/sidepanel/main.tsx (turns T065 green)
-- [ ] T068 [US3] Extend src/ui/views/detail-view.test.tsx first (copy whole token / header JSON / payload JSON / each claim through the Clipboard port; revealed values reset on reopen), then apply CopyCommand in src/ui/views/detail-view.tsx and src/ui/components/claim-entry.tsx
-- [ ] T069 [US3] Write E2E journey e2e/mask-reveal-copy.spec.ts (clipboard read through Playwright permissions) and run it
+- [x] T066 [P] [US3] Implement src/ui/components/copy-command.tsx (turns T064 green)
+- [x] T067 [P] [US3] Implement src/infrastructure/clipboard/navigator-clipboard.ts and wire it in src/entrypoints/sidepanel/main.tsx (turns T065 green)
+- [x] T068 [US3] Extend src/ui/views/detail-view.test.tsx first (copy whole token / header JSON / payload JSON / each claim through the Clipboard port; revealed values reset on reopen), then apply CopyCommand in src/ui/views/detail-view.tsx and src/ui/components/claim-entry.tsx
+- [x] T069 [US3] Write E2E journey e2e/mask-reveal-copy.spec.ts (clipboard read through Playwright permissions) and run it
 
 ---
 

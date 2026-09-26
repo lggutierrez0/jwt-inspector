@@ -1,12 +1,13 @@
 import type { JsonObject } from '../jwt/types';
 import { LABEL_MAX_LENGTH } from '../vault/token-record';
 
-const LABEL_CLAIMS = ['name', 'email', 'preferred_username', 'sub', 'iss'] as const;
+// Labels are always visible, so they never come from personal data that the detail masks.
+const LABEL_CLAIMS = ['preferred_username', 'sub', 'iss'] as const;
 const GENERIC_LABEL = /^Token (\d+)$/u;
 
 /**
- * Default label for a new token (FR-011): the first non-empty identifying claim, otherwise
- * "Token N" with the smallest N not already used.
+ * Default label for a new token (FR-011): the first non-empty, non-sensitive identifying claim,
+ * otherwise "Token N" with the smallest N not already used.
  */
 export function defaultLabel(payload: JsonObject, existingLabels: readonly string[]): string {
   for (const claim of LABEL_CLAIMS) {

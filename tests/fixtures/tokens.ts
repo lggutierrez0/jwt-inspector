@@ -87,17 +87,17 @@ export const expBeforeIat = makeJws({
   payload: { sub: 'backwards', iat: seconds(NOW), exp: seconds(NOW - H) },
 });
 
-export const withPersonalClaims = makeJws({
-  payload: {
-    sub: 'u-17',
-    email: 'maria@example.test',
-    name: 'María Example',
-    phone_number: '+1 555 0100',
-    roles: ['admin'],
-    credentials: { apiKey: 'k-123', scope: 'read' },
-    exp: seconds(NOW + H),
-  },
-});
+export const personalClaimsPayload = {
+  sub: 'u-17',
+  email: 'maria@example.test',
+  name: 'María Example',
+  phone_number: '+1 555 0100',
+  roles: ['admin'],
+  credentials: { apiKey: 'k-123', scope: 'read' },
+  exp: seconds(NOW + H),
+};
+
+export const withPersonalClaims = makeJws({ payload: personalClaimsPayload });
 
 export const jwe5Parts = [
   encodeSegment({ alg: 'RSA-OAEP', enc: 'A256GCM' }),

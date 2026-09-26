@@ -177,3 +177,12 @@ list:
 empty:
   title: No tokens yet
   body: Paste a JWT to see who issued it, what it claims and how long it stays valid. Tokens are kept only in this browser, private to the extension.
+copy:
+  label: copy
+  field: copy $1
+  copied: copied
+  announce: $1 copied
+  failed: "Couldn't copy to the clipboard. Select the text and copy it manually."
+  token: token
+  headerJson: header JSON
+  payloadJson: payload JSON

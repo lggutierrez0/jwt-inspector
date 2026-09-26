@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 
+import type { Clipboard } from '@/application/ports/clipboard';
 import type { Clock } from '@/application/ports/clock';
 import type { IdGenerator } from '@/application/ports/id-generator';
 import type { VaultRepository } from '@/application/ports/vault-repository';
@@ -9,6 +10,7 @@ export interface Services {
   readonly repository: VaultRepository;
   readonly clock: Clock;
   readonly ids: IdGenerator;
+  readonly clipboard: Clipboard;
 }
 
 export const ServicesContext = createContext<Services | null>(null);

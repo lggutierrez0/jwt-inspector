@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import '@/assets/styles/tailwind.css';
+import { NavigatorClipboard } from '@/infrastructure/clipboard/navigator-clipboard';
 import { BrowserVaultRepository } from '@/infrastructure/storage/browser-vault-repository';
 import { CryptoIdGenerator } from '@/infrastructure/system/crypto-id-generator';
 import { SystemClock } from '@/infrastructure/system/system-clock';
@@ -23,6 +24,7 @@ const services: Services = {
   repository: new BrowserVaultRepository(),
   clock: new SystemClock(),
   ids: new CryptoIdGenerator(),
+  clipboard: new NavigatorClipboard(),
 };
 
 createRoot(container).render(
