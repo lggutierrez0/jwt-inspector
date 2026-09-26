@@ -77,7 +77,8 @@
       "files": ["**/*.test.ts", "**/*.test.tsx", "tests/**", "e2e/**"],
       "rules": {
         "typescript/no-non-null-assertion": "off",
-        "eslint/max-lines-per-function": "off"
+        "eslint/max-lines-per-function": "off",
+        "eslint/max-classes-per-file": "off"
       }
     },
     {
