@@ -87,17 +87,17 @@ every story uses. **No user-story work starts before this phase is green.**
 
 ### UI foundation (research R5, R7, R10)
 
-- [ ] T029 Write failing tests src/ui/clock/clock-ticker.test.ts with Vitest fake timers: one shared ticker publishes `now` every 1000ms to all subscribers, pauses when `document.visibilityState` is `hidden` and resumes (immediately publishing) when visible, stops when the last subscriber leaves; `useNow()` re-renders subscribers
-- [ ] T030 Implement src/ui/clock/clock-ticker.ts and src/ui/clock/use-now.ts with `useSyncExternalStore` (turns T029 green)
-- [ ] T031 [P] Write failing tests src/ui/i18n/format.test.ts (TZ=UTC, locales `en` and `es`): `formatRelative(target, now)` via `Intl.RelativeTimeFormat`; `formatAbsolute(epochMs)` with `timeZoneName: 'short'`; `formatDuration(splitDuration)` ("2 h 14 min" / "2 h 14 min" es); `formatTimeLeft` / `formatExpiredAgo`
-- [ ] T032 Implement src/ui/i18n/format.ts, src/ui/i18n/i18n-context.tsx (provider exposing `t` and `locale`; production value from `createI18n()` of `#i18n`) (turns T031 green)
-- [ ] T033 Write failing tests src/ui/app/view-reducer.test.ts: views `list | add | detail(id, notice?)`; `openAdd`, `openDetail`, `back` (keeps list scroll position value), `tokenRemovedExternally(id)` returns to list when the open detail's token disappears (data-model "State transitions")
-- [ ] T034 Implement src/ui/app/view-reducer.ts and src/ui/app/services-context.tsx (provides repository, clock, clipboard, id generator) (turns T033 green)
-- [ ] T035 Create test render helper tests/support/render.tsx wrapping components with the i18n context (T032), services context (T034) and clock (T030), each overridable with test fakes
-- [ ] T036 Write failing test src/ui/app/use-vault.test.tsx: `useVault()` loads state once, exposes loading/ready/error, re-renders on repository `subscribe` events, surfaces the dropped-record count once
-- [ ] T037 Implement src/ui/app/use-vault.ts (turns T036 green)
-- [ ] T038 Update src/ui/app-shell.test.tsx then src/ui/app-shell.tsx: header per DESIGN.md (product name, `v{version}` in `text-cite`), view outlet driven by the reducer, skeleton while the vault loads (index lines as rules, no spinner); keep the two existing assertions green
-- [ ] T039 Wire production providers in src/entrypoints/sidepanel/main.tsx (browser repository, system clock, no clipboard yet (added by the US3 adapter task), crypto ids, i18n) and set `lang` from the UI locale in src/entrypoints/sidepanel/index.html bootstrap
+- [x] T029 Write failing tests src/ui/clock/clock-ticker.test.ts with Vitest fake timers: one shared ticker publishes `now` every 1000ms to all subscribers, pauses when `document.visibilityState` is `hidden` and resumes (immediately publishing) when visible, stops when the last subscriber leaves; `useNow()` re-renders subscribers
+- [x] T030 Implement src/ui/clock/clock-ticker.ts and src/ui/clock/use-now.ts with `useSyncExternalStore` (turns T029 green)
+- [x] T031 [P] Write failing tests src/ui/i18n/format.test.ts (TZ=UTC, locales `en` and `es`): `formatRelative(target, now)` via `Intl.RelativeTimeFormat`; `formatAbsolute(epochMs)` with `timeZoneName: 'short'`; `formatDuration(splitDuration)` ("2 h 14 min" / "2 h 14 min" es); phrases such as "2 h left" are composed with `t()` in components (they need translation)
+- [x] T032 Implement src/ui/i18n/format.ts, src/ui/i18n/i18n-context.tsx (provider exposing `t` and `locale`; production value from `createI18n()` of `#i18n`) (turns T031 green)
+- [x] T033 Write failing tests src/ui/app/view-reducer.test.ts: views `list | add | detail(id, notice?)`; `openAdd`, `openDetail`, `back` (keeps list scroll position value), `tokenRemovedExternally(id)` returns to list when the open detail's token disappears (data-model "State transitions")
+- [x] T034 Implement src/ui/app/view-reducer.ts and src/ui/app/services-context.tsx (provides repository, clock, clipboard, id generator) (turns T033 green)
+- [x] T035 Create test render helper tests/support/render.tsx wrapping components with the i18n context (T032), services context (T034) and clock (T030), each overridable with test fakes
+- [x] T036 Write failing test src/ui/app/use-vault.test.tsx: `useVault()` loads state once, exposes loading/ready/error, re-renders on repository `subscribe` events, surfaces the dropped-record count once
+- [x] T037 Implement src/ui/app/use-vault.ts (turns T036 green)
+- [x] T038 Update src/ui/app-shell.test.tsx then src/ui/app-shell.tsx: header per DESIGN.md (product name, `v{version}` in `text-cite`), view outlet driven by the reducer, skeleton while the vault loads (index lines as rules, no spinner); keep the two existing assertions green
+- [x] T039 Wire production providers in src/entrypoints/sidepanel/main.tsx (browser repository, system clock, no clipboard yet (added by the US3 adapter task), crypto ids, i18n) and set `lang` from the UI locale in src/entrypoints/sidepanel/index.html bootstrap
 
 **Checkpoint**: `pnpm check` green; decoder, time rules, masking policy, vault persistence and
 shell work with no user-visible feature yet.

@@ -1,2 +1,5 @@
 extName: JWT Inspector
 extDescription: Detecta, inspecciona, verifica y crea JSON Web Tokens desde un panel lateral.
+app:
+  loading: Cargando tokens
+  loadError: No se pudieron leer los tokens guardados. Vuelve a abrir el panel para reintentar.
