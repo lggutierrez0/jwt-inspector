@@ -214,7 +214,48 @@ clipboard contents (quickstart "mask-reveal-copy").
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 7: User Story 5 - Reach every action from one place, read what the tool does, and pick a language (Priority: P1)
+
+**Goal**: one persistent command bar under the title on every screen; an info view; a language
+switch that overrides the browser default and persists.
+
+**Independent Test**: quickstart "always-on-bar".
+
+### Tests for User Story 5 ⚠️
+
+- [x] T089 [P] [US5] Write failing tests src/ui/i18n/translate.test.ts for `createTranslator(messages)`: positional substitution (`$1`…`$9`, `$$` escapes), named substitution, plural 1-way/2-way/3-way split identical to `@wxt-dev/i18n`'s `createI18n().t` (one algorithm, not duplicated — global CLAUDE.md on repeated patterns); missing key returns `''` and warns
+- [x] T090 [P] [US5] Write failing tests src/ui/i18n/detect-locale.test.ts for `detectSupportedLocale(uiLanguage)`: `es`, `es-ES`, `es_MX` → `'es'`; anything else, `''`, `undefined` → `'en'` (FR-025 fallback)
+- [x] T091 [US5] Implement src/ui/i18n/translate.ts and src/ui/i18n/detect-locale.ts (turns T089, T090 green)
+- [x] T092 [P] [US5] Define port src/application/ports/locale-preference-repository.ts exactly as contracts/ports.md; add `InMemoryLocalePreferenceRepository` to tests/support/in-memory-ports.ts
+- [x] T093 [US5] Write failing tests src/infrastructure/i18n/browser-locale-preference-repository.test.ts with WXT `fakeBrowser`: round-trips `'en' | 'es' | null` through storage item `local:localePreference`; nothing written to `storage.sync`
+- [x] T094 [US5] Implement src/infrastructure/i18n/browser-locale-preference-repository.ts (turns T093 green)
+- [x] T095 [P] [US5] Implement src/infrastructure/i18n/fetch-locale-messages.ts: `loadLocaleMessages(locale)` via `fetch(browser.runtime.getURL(\`/_locales/${locale}/messages.json\`))`, colocated test with a stubbed `fetch`
+- [x] T096 [US5] Write failing tests src/ui/i18n/switchable-i18n.test.tsx: with injected `loadMessages` (two in-memory message sets) and `InMemoryLocalePreferenceRepository`, defaults to the detected browser locale; loads a previously saved override on mount; `setLocale('es')` updates `t`/`locale` synchronously (both locales preloaded) and persists it; `setLocale(null)` reverts to the detected locale and clears the persisted override
+- [x] T097 [US5] Implement src/ui/i18n/switchable-i18n.tsx (`SwitchableI18nProvider`) and extend `I18nValue` with `setLocale(locale: SupportedLocale | null): void` (turns T096 green)
+- [ ] T098 [P] [US5] Write failing tests src/ui/app/nav-commands.test.ts for the pure `buildNavCommands(input): NavCommand[]`: omits "Add token" on the add screen; omits "Info" on the info screen; includes "Clear expired" only when `expiredCount > 0`; includes "Clear all" only when `tokenCount > 0`; command order matches FR-027 (data-model "NavCommand")
+- [ ] T099 [US5] Implement src/ui/app/nav-commands.ts (turns T098 green)
+- [ ] T100 [P] [US5] Write failing component tests src/ui/components/command-bar.test.tsx: renders each `NavCommand` as a `Command`; "Clear expired"/"Clear all" open a `ConfirmDialog` stating the exact count before acting (replaces list-toolbar.test.tsx); the language slot shows the current code and its accessible name names the language switched to
+- [ ] T101 [US5] Implement src/ui/components/command-bar.tsx (turns T100 green); delete src/ui/components/list-toolbar.tsx and its test (superseded)
+- [ ] T102 [US5] Write failing tests src/ui/views/info-view.test.tsx: focused `h2` heading (FocusHeading, WCAG 2.4.3); purpose paragraph; what is/is not stored; current version; a built-vs-planned roadmap summary; `[ back ]` calls `onBack`
+- [ ] T103 [US5] Implement src/ui/views/info-view.tsx and its en/es messages (turns T102 green)
+- [ ] T104 [US5] Update src/ui/app/view-reducer.test.ts then view-reducer.ts: add screen `info`; `openInfo` remembers the screen it was opened from (`returnTo`); `back` from `info` returns to it (data-model "State transitions"); existing `detail → list` back behavior (scroll position) is unchanged
+
+### Implementation for User Story 5
+
+- [x] T105 [US5] Update tests/support/render.tsx to provide a default i18n value with a working `setLocale` (small in-memory stub) so every existing component test keeps working unchanged
+- [ ] T106 [US5] Update src/ui/app-shell.test.tsx then src/ui/app-shell.tsx: mount `CommandBar` under `AppHeader` on every screen, built from `buildNavCommands` (vault token/expired counts, current screen, `dispatch(openAdd | openInfo | back)`, `useVaultActions().clearAll/clearExpired`, `setLocale`); render `InfoView` for screen `info`
+- [ ] T107 [US5] Update src/ui/views/list-view.tsx and its test: remove `ListToolbar` (moved to the header); keep only the token count inline
+- [x] T108 [US5] Wire production in src/entrypoints/sidepanel/main.tsx: `SwitchableI18nProvider` (`BrowserLocalePreferenceRepository`, `loadLocaleMessages`, `detectSupportedLocale(browser.i18n.getUILanguage())`) replaces `createBrowserI18n()`; keep `document.documentElement.lang` reactive to locale changes
+- [ ] T109 [P] [US5] Add the new en/es message keys (info view, language command) to src/locales/{en,es}.yml
+- [ ] T110 [US5] Update e2e/manage-vault.spec.ts for the relocated clear commands; write e2e/always-on-bar.spec.ts (US5 AS1–AS5): bar contents per screen; info opens from list/add/detail and `[ back ]` returns to each correctly; language switch persists across a reload; clearing all from an open detail returns to the list; run `pnpm test:e2e`
+- [ ] T111 [US5] Update DESIGN.md ("Command bar", "Info view") and README.md (mention the persistent bar and info view in Usage) for this addition
+
+**Checkpoint**: every action from US1–US4 is reachable from one persistent bar; info and language
+are built, not deferred to roadmap item 009.
+
+---
+
+## Phase 8: Polish & Cross-Cutting Concerns
 
 - [x] T082 [P] Write test src/locales/locales.test.ts: `en.yml` and `es.yml` have identical key sets, no empty values, no em-dash or en-dash characters in any string; the built manifests declare `default_locale: "en"` (FR-025 fallback); fix any gap
 - [x] T083 [P] Write E2E e2e/accessibility.spec.ts with `@axe-core/playwright`: list (empty and seeded), add (with error), detail (valid, expired, JWE), confirm dialog, undo toast; in light and dark (`colorScheme`) and en/es (`locale`); zero WCAG 2.2 AA violations (SC-006); plus a keyboard-only pass of US1–US4 at 320px width
@@ -236,7 +277,11 @@ clipboard contents (quickstart "mask-reveal-copy").
   T062 makes the list the default view, so it merges after T056 in practice.
 - **US3 (T064–T069)**: needs the detail view from US1 (T055).
 - **US4 (T070–T081)**: needs the detail view (T055) and list view (T062).
-- **Polish (T082–T088)**: after all targeted stories.
+- **US5 (T089–T111)**: after Foundational; needs the list/add/detail views (T055, T062) and the
+  clear actions (T076) to compose the bar, but its i18n and locale-preference tasks
+  (T089–T097) are independent of every other story.
+- **Polish (T082–T088 done; T089–T111 supersede where they touch the same files)**: after all
+  targeted stories.
 
 ### Within each story
 
@@ -280,5 +325,6 @@ Each story ends green on `pnpm check` and its E2E journey before the next starts
 | FR-015–FR-016         | T018, T019, T047, T054, T044, T055, T064, T065, T066–T069 |
 | FR-017–FR-019, FR-023 | T070–T081                                                 |
 | FR-020–FR-022         | T024–T027, T036, T037, T081                               |
-| FR-024–FR-026         | T031, T032, T038, T082, T083                              |
+| FR-024–FR-026         | T031, T032, T038, T082, T083, T089–T097, T108             |
+| FR-027–FR-029         | T089–T111                                                 |
 | SC-001–SC-007         | T057, T060, T063, T081, T083                              |

@@ -2,6 +2,10 @@ import type { Clipboard } from '@/application/ports/clipboard';
 import type { Clock } from '@/application/ports/clock';
 import type { IdGenerator } from '@/application/ports/id-generator';
 import type {
+  LocalePreferenceRepository,
+  SupportedLocale,
+} from '@/application/ports/locale-preference-repository';
+import type {
   SaveResult,
   Unsubscribe,
   VaultLoadResult,
@@ -85,5 +89,16 @@ export class SequentialIdGenerator implements IdGenerator {
   next(): string {
     this.#count += 1;
     return `id-${this.#count}`;
+  }
+}
+
+export class InMemoryLocalePreferenceRepository implements LocalePreferenceRepository {
+  constructor(private stored: SupportedLocale | null = null) {}
+  load(): Promise<SupportedLocale | null> {
+    return Promise.resolve(this.stored);
+  }
+  save(locale: SupportedLocale | null): Promise<void> {
+    this.stored = locale;
+    return Promise.resolve();
   }
 }

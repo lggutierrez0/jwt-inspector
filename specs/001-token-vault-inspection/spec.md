@@ -14,6 +14,15 @@ the extension; English and Spanish; JWE recognized but not supported yet."
 
 ## Clarifications
 
+### Session 2026-09-26 (design review)
+
+- Q: add token and clear (all/expired) lived in different places (header, list toolbar); an
+  info/help view and a language switch were in the brief but missing from 001. → A: one
+  persistent command bar under the title, present on every screen: `[ add token ]`,
+  `[ clear expired ]` (when any), `[ clear all ]` (when any token), `[ ? ]` (info view),
+  and the current language (`EN`/`ES`, toggles and is remembered). Info and language move into
+  001's scope so the first release matches the original brief; see User Story 5.
+
 ### Session 2026-09-26 (implementation)
 
 - Q: FR-011 derived labels from `name`/`email`, exposing data FR-015 masks. → A: Labels use only
@@ -157,6 +166,43 @@ vault state; verify tokens are not readable from a web page context.
 
 ---
 
+### User Story 5 - Reach every action from one place, read what the tool does, and pick a
+
+language (Priority: P1)
+
+A user opens the panel for the first time, or is deep in a token's detail, and wants to add
+another token, clear the vault, understand what the extension does and does not do, or read the
+panel in their own language, without hunting for the control or navigating back first.
+
+**Why this priority**: without this, the actions built in US1–US4 are scattered across screens
+and there is no way to learn what the tool does or read it in a chosen language; it is as
+foundational as the vault itself, not a later polish item.
+
+**Independent Test**: from the list, from the add screen and from a token's detail, use each
+command in the bar; open and close the info view; switch language and confirm it persists after
+closing the panel (quickstart "always-on-bar").
+
+**Acceptance Scenarios**:
+
+1. **Given** any screen, **When** the user looks below the title, **Then** a command bar is
+   present with `[ add token ]`, `[ clear expired ]` (only when at least one token is expired),
+   `[ clear all ]` (only when the vault is non-empty), `[ ? ]` and the current language.
+2. **Given** the add screen or the info view, **When** the bar is shown, **Then** the command for
+   that same screen (`[ add token ]` or `[ ? ]`) is omitted, since it would reopen the screen
+   already open.
+3. **Given** any screen, **When** the user chooses `[ ? ]`, **Then** the info view opens,
+   explaining the extension's purpose, what it stores and does not store, the current version,
+   and a summary of what is built versus planned; `[ back ]` returns to the previous screen.
+4. **Given** any screen, **When** the user chooses the language command, **Then** the interface
+   switches immediately between English and Spanish, the choice is remembered across restarts,
+   and dates/times follow the chosen language; without a choice, the browser's language is used
+   (English if unsupported), matching FR-025.
+5. **Given** a token's detail view, **When** the user chooses `[ clear all ]` and confirms,
+   **Then** the vault empties and the view returns to the list, exactly as when the currently
+   open token is removed by another panel (data-model "State transitions").
+
+---
+
 ### Edge Cases
 
 - Very long tokens (e.g. 16 KB with large claims) are accepted, displayed without breaking the
@@ -258,11 +304,27 @@ vault state; verify tokens are not readable from a web page context.
   able to remove all expired tokens at once ("Clear expired") after a confirmation stating how
   many will be removed; the action is available only when at least one token is expired.
 
+**Navigation, help and language**
+
+- **FR-027**: A command bar MUST be present under the title on every screen (list, add, detail,
+  info), offering "Add token" (except on the add screen), "Clear expired" (only when at least one
+  token is expired), "Clear all" (only when the vault is non-empty), "Info" (except on the info
+  screen) and the language command; the bar's set of commands MUST be composable so a later
+  feature can add its own entry without editing the others (constitution, KISS layers).
+- **FR-028**: An info view MUST be reachable from every screen, presenting: the extension's
+  purpose in a few sentences; what is stored (labels and tokens, locally, never synchronized) and
+  what is not (no network access, no analytics); the current version; and a summary of which
+  roadmap items are built versus planned. It MUST offer a way back to the previous screen.
+- **FR-029**: Users MUST be able to switch the interface language between every language shipped
+  in `src/locales/` from a single command that shows the current language and toggles to the
+  other; the choice MUST persist across restarts in the same local, per-extension storage as the
+  vault (FR-020) and MUST NOT be synchronized across devices.
+
 **Cross-cutting**
 
 - **FR-024**: The panel header MUST show the extension version at all times.
 - **FR-025**: All user-facing text MUST be available in English and Spanish, following the
-  browser language, with English as fallback.
+  browser language by default, with English as fallback, and overridable per FR-029.
 - **FR-026**: Every action MUST be operable by keyboard with visible focus, all controls MUST have
   accessible names, status changes (copied, deleted, errors) MUST be announced to assistive
   technology, and the layout MUST remain usable at 320px width in light and dark themes.
@@ -313,5 +375,8 @@ vault state; verify tokens are not readable from a web page context.
   to clear the clipboard afterwards (browsers do not allow it reliably).
 - Only manual entry produces tokens in this feature; the list and model already accommodate all
   sources for features 004–007.
+- The info view (User Story 5) is the minimal, always-available explanation of the tool; the
+  richer help content planned for roadmap item 009 (searchable topics, screenshots) can extend it
+  later without changing where it is reached from.
 - Out of scope: security score (002), signature verification (003), token creation (004),
-  automatic detection (005–007), vault encryption (008), help view (009), JWE decryption.
+  automatic detection (005–007), vault encryption (008), JWE decryption.

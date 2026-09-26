@@ -14,6 +14,15 @@ time. Types below are conceptual; TypeScript definitions live in `src/domain`.
 Migrations: keyed by version number; v1 is the initial schema. Reads are parsed with the
 valibot schema; a record failing the schema is dropped and reported (never crashes the panel).
 
+### LocalePreference (storage item `local:localePreference`, FR-029)
+
+| Field    | Type                   | Rules                                                              |
+| -------- | ---------------------- | ------------------------------------------------------------------ |
+| `locale` | `'en' \| 'es' \| null` | `null` (the default) means "follow the browser language" (FR-025). |
+
+A separate item from the vault: unrelated lifecycle (never cleared by "clear all"), same storage
+area (`local`, never `sync`).
+
 ### TokenRecord
 
 | Field     | Type             | Rules                                                                         |
@@ -115,8 +124,17 @@ Catalog of registered claims and header parameters → i18n key of the one-line 
 list ──Add──▶ add ──valid──▶ detail(id)          (duplicate → detail(existing id) with "already saved" notice)
 list ──select──▶ detail(id) ──back──▶ list        (scroll restored)
 detail(id) ──delete──▶ list + undo(record, index, 5s) ──undo──▶ list (restored)
-list ──clear all / clear expired──▶ confirm ──ok──▶ list
+any screen ──clear all / clear expired──▶ confirm ──ok──▶ list (if a detail was open, its token
+                                                                 is now gone: same guard as below)
+any screen ──[ ? ]──▶ info ──back──▶ the screen info was opened from
 ```
 
-Vault changes from other panels arrive through the repository subscription; if the open
-detail's token disappears, the view returns to the list.
+Vault changes from other panels, or a clear command run from the currently open detail, arrive
+through the repository subscription; if the open detail's token disappears, the view returns to
+the list (same guard, one code path, US5 AS5).
+
+### NavCommand (UI, not persisted)
+
+The command bar (FR-027) is built from a list of `{ key, label, tone?, onSelect }` entries
+composed by the shell from the current screen and vault state, so a later feature adds an entry
+without editing the bar itself.

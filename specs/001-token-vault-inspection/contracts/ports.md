@@ -43,6 +43,23 @@ interface IdGenerator {
 }
 ```
 
+## LocalePreferenceRepository (FR-029)
+
+```ts
+type SupportedLocale = 'en' | 'es'; // matches src/locales/*.yml
+
+interface LocalePreferenceRepository {
+  load(): Promise<SupportedLocale | null>; // null = follow the browser language
+  save(locale: SupportedLocale | null): Promise<void>;
+}
+```
+
+- Implementations: `BrowserLocalePreferenceRepository` (WXT storage item
+  `local:localePreference`), `InMemoryLocalePreferenceRepository` (tests).
+- Unlike `VaultRepository.save`, failures are not surfaced to the user: worst case the override
+  does not persist and the panel falls back to the browser language next time (non-critical
+  preference, FR-029 does not promise resilience to storage errors).
+
 ## Use cases (application layer)
 
 | Use case       | Input            | Result (typed)                                                                                                           |
