@@ -41,7 +41,7 @@ JSON, JSON arrays).
 1. `pnpm dev` (Chromium) or `pnpm dev:firefox`; open the side panel from the toolbar icon.
 2. Empty state explains the tool; add the "valid 1 h" fixture with `Bearer ` prefix → detail
    opens, status and ruler visible without scrolling at 320px width (resize the panel).
-3. Add the same token again → no duplicate, existing row highlighted.
+3. Add the same token again → no duplicate; the existing token opens with an "already saved" notice.
 4. Add "expiring in 30 s" → watch the countdown reach "Expired" within 1 s of expiry.
 5. Detail: signature and `email` masked; reveal/hide one; copy payload and one claim, paste into
    an editor to confirm exact values; close and reopen → masked again.

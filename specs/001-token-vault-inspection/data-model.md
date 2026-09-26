@@ -111,7 +111,7 @@ Catalog of registered claims and header parameters → i18n key of the one-line 
 ## State transitions (UI)
 
 ```
-list ──Add──▶ add ──valid──▶ detail(id)          (duplicate → list with highlight(id))
+list ──Add──▶ add ──valid──▶ detail(id)          (duplicate → detail(existing id) with "already saved" notice)
 list ──select──▶ detail(id) ──back──▶ list        (scroll restored)
 detail(id) ──delete──▶ list + undo(record, index, 5s) ──undo──▶ list (restored)
 list ──clear all / clear expired──▶ confirm ──ok──▶ list
