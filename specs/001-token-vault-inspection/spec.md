@@ -184,7 +184,8 @@ vault state; verify tokens are not readable from a web page context.
   (case-insensitive) before parsing.
 - **FR-003**: The system MUST decode a three-part token into header, payload and signature, and
   reject input with a specific reason: wrong number of parts, invalid base64url in a named part,
-  header or payload not valid JSON, header or payload not a JSON object.
+  header or payload not valid JSON, header or payload not a JSON object, or token larger than
+  64 KiB (the persisted-format limit).
 - **FR-004**: The system MUST recognize five-part tokens as encrypted (JWE) and inform the user
   that they are not supported yet, without treating them as malformed.
 - **FR-005**: The system MUST NOT save a token that is already in the vault (exact match after
@@ -197,7 +198,7 @@ vault state; verify tokens are not readable from a web page context.
 **List view**
 
 - **FR-007**: The main view MUST list saved tokens ordered by most recently added first.
-- **FR-008**: Each list entry MUST show label, the last 8 characters of the token, a source badge,
+- **FR-008**: Each list entry MUST show label, the last 8 characters of the token, a source label,
   a status (valid, expired, not yet valid, never expires) with time remaining or elapsed, and the
   total lifetime.
 - **FR-009**: Total lifetime MUST be computed as `exp − iat`, or `exp − nbf` when `iat` is absent;
@@ -213,8 +214,9 @@ vault state; verify tokens are not readable from a web page context.
 
 - **FR-013**: The detail view MUST present, in this order: status summary; timing (issued at, not
   before, expires at — each as relative time and absolute local date-time with time-zone name);
-  lifetime progress (portion of total lifetime already consumed) when computable; header
-  parameters; payload claims; raw encoded parts; pretty-printed header and payload JSON.
+  lifetime progress (portion of total lifetime already consumed) when computable; raw encoded
+  parts (so the token can be recognized and copied without scrolling far); header parameters;
+  payload claims; pretty-printed header and payload JSON.
 - **FR-014**: Registered claims (`iss`, `sub`, `aud`, `exp`, `nbf`, `iat`, `jti`) and common
   header parameters (`alg`, `typ`, `cty`, `kid`, `jku`, `jwk`, `x5u`, `x5c`, `x5t`, `x5t#S256`,
   `crit`) MUST show a one-line, human-readable explanation; other claims are shown as custom
@@ -278,7 +280,7 @@ vault state; verify tokens are not readable from a web page context.
 - **SC-001**: A user can go from opening the panel to seeing a pasted token's decoded detail in
   under 10 seconds and with no more than 3 interactions.
 - **SC-002**: The detail view answers "is this token valid and for how long?" without scrolling
-  at 320px width.
+  in a 320×568px panel.
 - **SC-003**: 100% of malformed inputs from the test corpus (wrong parts, bad base64url, bad JSON,
   non-object JSON) produce a message naming the specific problem; none are saved.
 - **SC-004**: With 200 saved tokens, the list opens and becomes interactive in under 1 second, and

@@ -60,7 +60,8 @@ DecodeResult =
 - **RecognizedJwe**: `header: JsonObject` (protected header only), `partCount: 5`.
 - **DecodeError** (each maps to one i18n message, FR-003):
   `empty` · `wrongPartCount { count }` · `invalidBase64Url { part: 'header'|'payload'|'signature' }`
-  · `invalidUtf8 { part }` · `invalidJson { part }` · `notAnObject { part }`.
+  · `invalidUtf8 { part }` · `invalidJson { part }` · `notAnObject { part }` · `tooLarge { bytes }`
+  (normalized token > 64 KiB, the persisted-format limit).
 
 ### NormalizedInput
 

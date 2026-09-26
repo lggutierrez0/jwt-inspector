@@ -96,7 +96,7 @@ src/
 │   ├── app/                     # AppShell, view reducer, providers (i18n, clock, services)
 │   ├── i18n/                    # translator context, formatters (Intl) bound to locale
 │   ├── clock/                   # shared ClockTicker + useNow
-│   ├── components/              # DESIGN.md inventory (TokenRow, TimeRuler, MaskedValue, ...)
+│   ├── components/              # DESIGN.md inventory (IndexLine, TimeRuler, MaskedValue, CopyCommand, ...)
 │   └── views/                   # ListView, AddTokenView, DetailView
 ├── entrypoints/                 # background.ts, sidepanel/ (wiring only)
 ├── assets/styles/tailwind.css   # @theme tokens mirrored from DESIGN.md
