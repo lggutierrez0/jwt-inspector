@@ -27,6 +27,7 @@ Expected: all green. E2E journeys map to the spec:
 | manage-vault (rename, undo, clear)       | US4 AS1–AS3, AS6–AS7, FR-017–FR-019, FR-023 |
 | persistence-and-isolation                | US4 AS4–AS5, FR-020, FR-022, SC-005         |
 | accessibility (axe, both themes/locales) | FR-026, SC-006                              |
+| always-on-bar                            | US5 AS1–AS5, FR-027–FR-029                  |
 
 ## Test fixtures
 
@@ -53,6 +54,14 @@ JSON, JSON arrays).
    only (Tab, Enter, Esc, arrows in the list) completes steps 2–6.
 10. From a page's devtools console run `chrome.storage` / `localStorage` lookups → vault is not
     reachable.
+11. The command bar under the title is present on the list, add, detail and info screens, with
+    "add token" hidden only on add and "info" hidden only on info; "clear expired"/"clear all"
+    appear and disappear as tokens are added, expire and are removed.
+12. Open `[ info ]` from the list, from the add screen and from a detail; `[ back ]` returns to
+    each one, not always the list; the version shown matches the panel header's.
+13. Use the language command to switch to Spanish; every string, including the language
+    command's own name, is now in Spanish; restart the browser → the choice is remembered. Use
+    it again to switch back.
 
 ## Done when
 
