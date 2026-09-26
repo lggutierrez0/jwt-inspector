@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useCallback, useReducer } from 'react';
 
 import { findById } from '@/domain/vault/token-record';
 
@@ -9,6 +9,7 @@ import { Command } from './components/command';
 import { useI18n } from './i18n/i18n-context';
 import { AddTokenView } from './views/add-token-view';
 import { DetailView } from './views/detail-view';
+import { ListView } from './views/list-view';
 
 interface AppShellProps {
   readonly version: string;
@@ -58,24 +59,32 @@ export function AppShell({ version }: AppShellProps) {
 
   useRemovedTokenGuard(vault, screen, openRecord, dispatch);
 
+  const openAdd = useCallback(() => {
+    dispatch({ type: 'openAdd' });
+  }, []);
+  const openDetail = useCallback((id: string, listScroll: number) => {
+    dispatch({ type: 'openDetail', id, listScroll });
+  }, []);
+  // The empty state carries the only "add token" action (one action per intent).
+  const hasTokens = vault.status === 'ready' && vault.state.tokens.length > 0;
+
   return (
     <div className="flex min-h-dvh flex-col bg-surface text-ink">
-      <AppHeader
-        version={version}
-        onAdd={
-          vault.status === 'ready' && screen.name !== 'add'
-            ? () => {
-                dispatch({ type: 'openAdd' });
-              }
-            : null
-        }
-      />
+      <AppHeader version={version} onAdd={hasTokens && screen.name !== 'add' ? openAdd : null} />
       <main className="flex-1" data-screen={screen.name}>
         {vault.status === 'loading' && <LoadingSkeleton label={t('app.loading')} />}
         {vault.status === 'error' && (
           <p role="alert" className="px-3 py-4 text-status-expired wide:px-4">
             {t('app.loadError')}
           </p>
+        )}
+        {vault.status === 'ready' && screen.name === 'list' && (
+          <ListView
+            tokens={vault.state.tokens}
+            initialScroll={view.listScroll}
+            onOpen={openDetail}
+            onAdd={openAdd}
+          />
         )}
         {vault.status === 'ready' && screen.name === 'add' && (
           <AddTokenView

@@ -77,7 +77,8 @@ describe('AppShell', () => {
     await user.paste(valid1h);
     await user.keyboard('{Enter}');
     await user.click(await screen.findByRole('button', { name: 'back' }));
-    expect(screen.queryByText('1 h left')).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Token summary' })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Saved tokens' })).toBeInTheDocument();
   });
 
   it('leaves a detail whose token another panel removed (FR-022)', async () => {
@@ -95,7 +96,7 @@ describe('AppShell', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByText('1 h left')).not.toBeInTheDocument();
+      expect(screen.queryByRole('region', { name: 'Token summary' })).not.toBeInTheDocument();
     });
   });
 
@@ -110,5 +111,58 @@ describe('AppShell', () => {
     await user.keyboard('{Enter}');
 
     expect(await screen.findByText('1 h left')).toBeInTheDocument();
+  });
+
+  it('shows the index of saved tokens once loaded', async () => {
+    const repository = new InMemoryVaultRepository({
+      tokens: [
+        {
+          id: 'a',
+          raw: valid1h,
+          kind: 'jws',
+          label: 'Session',
+          source: { kind: 'manual' },
+          addedAt: 0,
+        },
+      ],
+    });
+    renderWithProviders(<AppShell version="1.2.3" />, { repository });
+
+    expect(await screen.findByRole('button', { name: /Session/u })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'add token' })).toBeInTheDocument();
+  });
+
+  it('offers adding exactly once when the vault is empty', async () => {
+    renderWithProviders(<AppShell version="1.2.3" />);
+
+    await screen.findByText('No tokens yet');
+    expect(screen.getAllByRole('button', { name: 'add token' })).toHaveLength(1);
+  });
+
+  it('restores the list scroll position after visiting a detail', async () => {
+    const user = userEvent.setup();
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {
+      // jsdom-like environments do not scroll.
+    });
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 180 });
+    const repository = new InMemoryVaultRepository({
+      tokens: [
+        {
+          id: 'a',
+          raw: valid1h,
+          kind: 'jws',
+          label: 'Session',
+          source: { kind: 'manual' },
+          addedAt: 0,
+        },
+      ],
+    });
+    renderWithProviders(<AppShell version="1.2.3" />, { repository });
+
+    await user.click(await screen.findByRole('button', { name: /Session/u }));
+    await user.click(screen.getByRole('button', { name: 'back' }));
+
+    expect(scrollTo).toHaveBeenLastCalledWith(0, 180);
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
   });
 });

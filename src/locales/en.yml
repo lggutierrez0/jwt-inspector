@@ -154,3 +154,26 @@ headerParams:
   crit:
     title: Critical
     summary: Extensions the receiver must understand to accept the token.
+sources:
+  manual: manual
+  created: created
+  cookie: cookie
+  localStorage: local storage
+  sessionStorage: session storage
+  requestHeader: request header
+  urlParameter: URL parameter
+  body: body
+  consoleLog: console log
+list:
+  label: Saved tokens
+  count:
+    0: No tokens
+    1: 1 token
+    n: $1 tokens
+  lifetime: $1 lifetime
+  lifetimeUnknown: lifetime unknown
+  noExpiry: no expiry
+  encrypted: Encrypted
+empty:
+  title: No tokens yet
+  body: Paste a JWT to see who issued it, what it claims and how long it stays valid. Tokens are kept only in this browser, private to the extension.

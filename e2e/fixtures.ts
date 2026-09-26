@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { type BrowserContext, test as base, chromium } from '@playwright/test';
+import { type BrowserContext, type Page, test as base, chromium } from '@playwright/test';
 
 const extensionPath = path.resolve(import.meta.dirname, '../.output/chrome-mv3');
 
@@ -35,3 +35,28 @@ export const test = base.extend<ExtensionFixtures>({
 });
 
 export const { expect } = test;
+
+/** The extension-page `chrome` API used by the helpers below (runs inside the page). */
+declare const chrome: {
+  storage: {
+    local: {
+      set(items: Record<string, unknown>): Promise<void>;
+      get(keys: string | null): Promise<Record<string, unknown>>;
+    };
+    sync: { get(keys: string | null): Promise<Record<string, unknown>> };
+  };
+};
+
+/** Replaces the persisted vault (contracts/storage-vault-v1.md) and reloads the panel. */
+export async function seedVault(page: Page, tokens: readonly unknown[]): Promise<void> {
+  await page.evaluate((value) => chrome.storage.local.set({ vault: { tokens: value } }), tokens);
+  await page.reload();
+}
+
+/** Reads raw storage areas from inside an extension page. */
+export function readStorage(page: Page): Promise<{ local: unknown; sync: unknown }> {
+  return page.evaluate(async () => ({
+    local: await chrome.storage.local.get(null),
+    sync: await chrome.storage.sync.get(null),
+  }));
+}

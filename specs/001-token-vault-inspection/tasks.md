@@ -151,15 +151,15 @@ live updates (quickstart "list-overview").
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T058 [P] [US2] Write failing component tests src/ui/components/index-line.test.tsx: label, dotted leader, time left colored by status (plus status word), second line tail `...` + last 8 characters, source name for every `TokenSource` kind, lifetime (`Unknown`, `Never expires`); whole line is one button with an accessible name including label and status
-- [ ] T059 [US2] Write failing component tests src/ui/views/list-view.test.tsx (fake timers): most recently added first (FR-007); time left updates each second while visible and flips to "Expired" within 1s of `exp` (FR-010, SC-007); empty state with purpose text and `[ add token ]` (FR-012); selecting by click or Enter opens detail; back restores scroll position; toolbar shows the count
-- [ ] T060 [US2] Write failing render test src/ui/views/list-view.render.test.tsx: with 200 fixture tokens a clock tick re-renders only the time element of each line, never whole lines (supports SC-004; the time budget itself is measured in E2E)
+- [x] T058 [P] [US2] Write failing component tests src/ui/components/index-line.test.tsx: label, dotted leader, time left colored by status (plus status word), second line tail `...` + last 8 characters, source name for every `TokenSource` kind, lifetime (`Unknown`, `Never expires`); whole line is one button with an accessible name including label and status
+- [x] T059 [US2] Write failing component tests src/ui/views/list-view.test.tsx (fake timers): most recently added first (FR-007); time left updates each second while visible and flips to "Expired" within 1s of `exp` (FR-010, SC-007); empty state with purpose text and `[ add token ]` (FR-012); selecting by click or Enter opens detail; back restores scroll position; toolbar shows the count
+- [x] T060 [US2] Write failing render test src/ui/views/list-view.render.test.tsx: with 200 fixture tokens a clock tick re-renders only the time element of each line, never whole lines (supports SC-004; the time budget itself is measured in E2E)
 
 ### Implementation for User Story 2
 
-- [ ] T061 [P] [US2] Implement src/ui/components/index-line.tsx (memoized; subscribes to `useNow` only in its time element) (turns T058 green)
-- [ ] T062 [US2] Implement src/ui/views/list-view.tsx and src/ui/components/empty-state.tsx; make the list the default view in src/ui/app-shell.tsx (turns T059, T060 green)
-- [ ] T063 [US2] Write E2E journey e2e/list-overview.spec.ts (US2 AS1–AS5, SC-007 with a 30s-expiry fixture) plus SC-004: 200 tokens seeded into storage, the first index line is clickable within 1 s of opening the panel (measured with `performance.now()` in the page), and run it
+- [x] T061 [P] [US2] Implement src/ui/components/index-line.tsx (memoized; subscribes to `useNow` only in its time element) (turns T058 green)
+- [x] T062 [US2] Implement src/ui/views/list-view.tsx and src/ui/components/empty-state.tsx; make the list the default view in src/ui/app-shell.tsx (turns T059, T060 green)
+- [x] T063 [US2] Write E2E journey e2e/list-overview.spec.ts (US2 AS1–AS5, SC-007 with a 30s-expiry fixture) plus SC-004: 200 tokens seeded into storage, the first index line is clickable within 1 s of opening the panel (measured with `performance.now()` in the page), and run it
 
 **Checkpoint**: US1 and US2 work independently and together.
 

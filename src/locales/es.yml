@@ -154,3 +154,26 @@ headerParams:
   crit:
     title: Crítico
     summary: Extensiones que el receptor debe entender para aceptar el token.
+sources:
+  manual: manual
+  created: creado
+  cookie: cookie
+  localStorage: local storage
+  sessionStorage: session storage
+  requestHeader: header de solicitud
+  urlParameter: parámetro de URL
+  body: body
+  consoleLog: log de consola
+list:
+  label: Tokens guardados
+  count:
+    0: Sin tokens
+    1: 1 token
+    n: $1 tokens
+  lifetime: vida útil $1
+  lifetimeUnknown: vida útil desconocida
+  noExpiry: sin expiración
+  encrypted: Cifrado
+empty:
+  title: Todavía no hay tokens
+  body: Pega un JWT para ver quién lo emitió, qué declara y cuánto tiempo sigue siendo válido. Los tokens se guardan solo en este navegador, privados para la extensión.
