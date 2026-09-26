@@ -191,7 +191,7 @@ select `.output/firefox-mv3/manifest.json`.
 | Area                | Choice                                                                                                                                                           |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Extension framework | [WXT](https://wxt.dev) — Manifest V3 for Chromium and Firefox from one codebase                                                                                  |
-| UI                  | [React 19](https://react.dev), [Tailwind CSS 4](https://tailwindcss.com), [Lucide](https://lucide.dev) icons                                                     |
+| UI                  | [React 19](https://react.dev), [Tailwind CSS 4](https://tailwindcss.com), [Martian Mono](https://github.com/evilmartians/mono) (bundled)                         |
 | Language            | [TypeScript 7](https://www.typescriptlang.org) with the strictest compiler flags                                                                                 |
 | Validation          | [Valibot](https://valibot.dev) at storage and messaging boundaries                                                                                               |
 | Cryptography        | Web Crypto API (verification and signing from milestones 003–004)                                                                                                |

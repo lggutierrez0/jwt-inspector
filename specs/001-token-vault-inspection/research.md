@@ -105,11 +105,15 @@ documentation) on 2026-09-26.
 
 ## R11. Icons and fonts (bundled, no remote requests)
 
-- **Decision**: `lucide-react@1.48.0` (zero dependencies, per-icon tree-shaking);
-  `@fontsource-variable/ibm-plex-sans@5.3.0` and `@fontsource-variable/jetbrains-mono@5.3.0`,
-  latin + latin-ext subsets only, bundled with the extension.
-- **Rationale**: Principle III-a forbids remote calls (no Google Fonts CDN). SVG icons, never
-  emoji (ui-ux-pro-max pre-delivery checklist).
+- **Decision**: no icon library. The chosen direction (R14) expresses actions as bracketed text
+  commands, so icons would add weight without meaning. Font: `@fontsource-variable/martian-mono@5.3.0`
+  (`standard` file: `wght` 100–800 and `wdth` axes in one woff2, ~38 KB latin + latin-ext).
+- **Rationale**: Principle III-a forbids remote calls (no Google Fonts CDN). One variable file
+  covers every weight and both widths the design uses.
+- **Alternatives**: Iosevka (≈1 MB per weight even in the latin subset: over budget);
+  Monaspace Neon/Xenon (~45 KB per static weight); JetBrains Mono and IBM Plex (category
+  defaults flagged by impeccable); `lucide-react` / `@phosphor-icons/react` (not needed once
+  commands are text; taste-skill also discourages Lucide).
 
 ## R12. Accessibility testing
 
@@ -122,14 +126,24 @@ documentation) on 2026-09-26.
   `script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'` (MV3 disallows
   weakening `script-src`; explicit declaration documents and tightens the default).
 
-## R14. Visual direction
+## R14. Visual direction (impeccable new-work + taste skill)
 
-- **Decision**: recorded in `/DESIGN.md`. Summary: the token's own anatomy is the identity —
-  header, payload and signature each own a hue used consistently everywhere; a time ruler
-  (`iat → now → exp`) anchors the detail view; list rows, not cards; IBM Plex Sans for UI and
-  JetBrains Mono for token data; cool-ink dark theme and porcelain light theme, both first-class.
-- **Rationale / alternatives**: the ui-ux-pro-max design-system query suggested slate + neon
-  green with a documentation-landing pattern; the pattern does not fit a side panel and the
-  palette matches the "near-black + acid green" cluster the frontend-design skill flags as
-  generated. Its typography recommendation (JetBrains Mono + IBM Plex Sans for developer tools)
-  was kept.
+- **Decision**: "RFC / Internet-Draft". The panel is set like the specification it inspects:
+  RFC-style front matter (issuer, subject, audience | status, time left), numbered sections that
+  mirror the token's structure, every claim with its real citation (e.g. RFC 7519 §4.1.4), an
+  index with dotted leaders for the list, a ten-division time ruler, 1px rules, bracketed text
+  commands, Martian Mono only. Chosen by the user on 2026-09-26 among the dealt direction, the
+  designer's pick (passport/MRZ) and the category standard. Full spec in `/DESIGN.md`; direction
+  contract in `.impeccable/surfaces/` (seed `12a1d735`).
+- **Process**: impeccable `init` (PRODUCT.md from a user interview) → `new-work` (seven
+  audience-world candidates, `concept-seed` roll, six catalog challengers fused and judged on
+  audience identification and product clarity; raises kept: graticule, 1px rules and printed-mark
+  states, hierarchy by scale and weight, literal zone names) → user choice. taste-skill applied
+  within its stated scope (it excludes dense product UI): design read, dials 4/3/7, anti-default
+  checks (no em-dashes in UI copy, no decorative dots, no filled-track bars, full state cycles).
+- **Rejected**: the ui-ux-pro-max design-system output (slate + neon green, landing pattern:
+  matches the "near-black + one neon accent" cluster); the first draft of this plan (IBM Plex +
+  JetBrains Mono, generic rows): competent but guessable from the category.
+- **Consequence for tasks**: after the UI is built, run impeccable `detect`, `audit` and
+  `critique` (two independent assessments), fix in one batch, then regenerate DESIGN.md from
+  the built UI (`impeccable document`) — required by the direction contract's FINISH line.

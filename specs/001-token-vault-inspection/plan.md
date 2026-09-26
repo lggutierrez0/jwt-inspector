@@ -19,8 +19,8 @@ with one shared 1 s ticker for live countdowns. See [research.md](research.md).
 **Language/Version**: TypeScript 7.0.2 (strictest flags), ES2024 target, React 19.3 JSX
 
 **Primary Dependencies**: WXT 0.21.4 (+ `@wxt-dev/storage`, `@wxt-dev/i18n`), React 19.3,
-Tailwind CSS 4.3. New for this feature (exact pins): `valibot@1.5.0`, `lucide-react@1.48.0`,
-`@fontsource-variable/ibm-plex-sans@5.3.0`, `@fontsource-variable/jetbrains-mono@5.3.0`;
+Tailwind CSS 4.3. New for this feature (exact pins): `valibot@1.5.0`, `@fontsource-variable/martian-mono@5.3.0` (no icon library,
+see R11);
 dev: `@axe-core/playwright@4.13.0`
 
 **Storage**: `storage.local` single item `local:vault`, schema v1
@@ -46,16 +46,16 @@ feature (fonts dominate); works at 320px; WCAG 2.2 AA in both themes and locales
 
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle               | Gate                                                                                                         | Pre-research | Post-design                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------ | ------------ | -------------------------------------------------------------------------------- |
-| I. Test-First           | Every FR has a test at the lowest viable level; tasks will order tests before code; coverage gates unchanged | ✅           | ✅ Journeys ↔ FRs mapped in quickstart; fixtures defined                         |
-| II. Spec-Driven         | Spec complete, clarifications resolved, roadmap updated                                                      | ✅           | ✅ No scope added beyond spec                                                    |
-| III. Security & Privacy | No network, no new permissions, storage.local only, no secrets stored, masking by default, no innerHTML, CSP | ✅           | ✅ R3, R8, R9, R11, R13; contract forbids secrets                                |
-| IV. Type Safety         | External data parsed at boundaries; typed results for expected failures                                      | ✅           | ✅ valibot on storage reads (R2); DecodeResult/use-case results are unions       |
-| V. Simplicity & SoC     | Layers respected; one source model for all origins; no speculative abstractions                              | ✅           | ✅ 4 ports only; no router/state library (R10); TokenSource union covers 005–007 |
-| VI. UX, a11y, i18n      | DESIGN.md + tokens; AA verified; en/es; 320px                                                                | ✅           | ✅ Contrast computed for every text token; axe in E2E (R12)                      |
-| Tech & supply chain     | Exact pins, audited, zero-dependency additions                                                               | ✅           | ✅ All 4 runtime additions have no dependencies                                  |
-| Workflow & gates        | Conventional commits, hooks, CI unchanged                                                                    | ✅           | ✅                                                                               |
+| Principle               | Gate                                                                                                         | Pre-research | Post-design                                                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| I. Test-First           | Every FR has a test at the lowest viable level; tasks will order tests before code; coverage gates unchanged | ✅           | ✅ Journeys ↔ FRs mapped in quickstart; fixtures defined                                                                             |
+| II. Spec-Driven         | Spec complete, clarifications resolved, roadmap updated                                                      | ✅           | ✅ No scope added beyond spec                                                                                                        |
+| III. Security & Privacy | No network, no new permissions, storage.local only, no secrets stored, masking by default, no innerHTML, CSP | ✅           | ✅ R3, R8, R9, R11, R13; contract forbids secrets                                                                                    |
+| IV. Type Safety         | External data parsed at boundaries; typed results for expected failures                                      | ✅           | ✅ valibot on storage reads (R2); DecodeResult/use-case results are unions                                                           |
+| V. Simplicity & SoC     | Layers respected; one source model for all origins; no speculative abstractions                              | ✅           | ✅ 4 ports only; no router/state library (R10); TokenSource union covers 005–007                                                     |
+| VI. UX, a11y, i18n      | DESIGN.md + tokens; AA verified; en/es; 320px                                                                | ✅           | ✅ Contrast computed for every text token; axe in E2E (R12); impeccable direction contract + detect/audit/critique after build (R14) |
+| Tech & supply chain     | Exact pins, audited, zero-dependency additions                                                               | ✅           | ✅ Both runtime additions (valibot, one font) have no dependencies                                                                   |
+| Workflow & gates        | Conventional commits, hooks, CI unchanged                                                                    | ✅           | ✅                                                                                                                                   |
 
 No violations → Complexity Tracking not needed.
 
@@ -117,6 +117,14 @@ and component tests are colocated (`*.test.ts[x]` next to the code) so each modu
 sits beside it; shared test doubles and fixtures live in `tests/`. Import direction is enforced
 by `import/no-cycle` and reviewed in the Constitution Check: `ui → application → domain`,
 `infrastructure → application/domain`, `entrypoints → all`.
+
+## Design workflow
+
+The visual direction was chosen through impeccable (`PRODUCT.md`, direction contract in
+`.impeccable/surfaces/`) and taste-skill checks (research R14). UI tasks read `DESIGN.md` first,
+build code-led against the direction contract, then close with: `impeccable detect` on changed
+UI files, `impeccable audit` + `critique` (two independent assessments), one fix batch, and
+DESIGN.md regenerated from the built UI (`impeccable document`).
 
 ## Complexity Tracking
 
