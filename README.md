@@ -116,7 +116,10 @@ implemented.
 
 ### Everywhere
 
-- English and Spanish, light and dark themes, full keyboard support, WCAG 2.2 AA, usable at 320px.
+- A persistent command bar reaches add, clear, info and language from any screen.
+- An info view explains the tool, what is and isn't stored, the version, and the roadmap.
+- English and Spanish with a manual switch (remembered) or the browser's own language; light and
+  dark themes; full keyboard support; WCAG 2.2 AA; usable at 320px.
 
 ## Privacy and security model
 
@@ -180,7 +183,8 @@ select `.output/firefox-mv3/manifest.json`.
 ## Usage
 
 1. Click the JWT Inspector icon in the toolbar to open the panel (a side panel in Chromium, the
-   sidebar in Firefox).
+   sidebar in Firefox). A command bar under the title is present on every screen: add, clear,
+   info and the language switch, so you never have to navigate back to reach them.
 2. Choose **`[ add token ]`** and paste a JWT (a leading `Bearer ` is fine), then press Enter.
    Invalid input is rejected with the exact reason; pasting a token you already saved opens it
    instead of duplicating it.
@@ -192,8 +196,12 @@ select `.output/firefox-mv3/manifest.json`.
 5. The signature and personal claims are **masked** until you choose `[ reveal ]`. `[ copy ]` copies
    the real value even while it is masked on screen.
 6. `[ rename ]` edits the label in place (Enter saves, Escape cancels). `[ delete ]` removes a token
-   with a few seconds to undo; `[ clear expired ]` and `[ clear all ]` ask for confirmation first.
-7. Tokens stay in the extension's own local storage until you delete them. Nothing leaves your
+   with a few seconds to undo; `[ clear expired ]` and `[ clear all ]`, always reachable from the
+   command bar, ask for confirmation first.
+7. `[ info ]` explains what the extension does, what it stores (and does not), and its version.
+   The language command switches between English and Spanish immediately; your choice is
+   remembered, and without one the browser's language is used.
+8. Tokens stay in the extension's own local storage until you delete them. Nothing leaves your
    browser.
 
 Once detection ships (005–007), grant access to the site you are debugging and its tokens appear in

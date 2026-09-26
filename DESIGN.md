@@ -108,6 +108,22 @@ is inverted: `ink` ground, `surface` text and brackets. Reveal/hide toggles carr
 copy reads `[ copied ]` for 1.2s. Copy always copies the real, unmasked value (FR-016); masking
 protects the screen, not the clipboard.
 
+### Command bar
+
+A row of commands under the title, present on every screen (FR-027): `[ add token ]` (except on
+the add screen itself), `[ clear expired ]` (only when any token is expired), `[ clear all ]`
+(only when the vault is non-empty), `[ info ]` (except on the info screen), and the language
+command last, pushed to the far edge (`ml-auto`). Commands wrap onto a second line rather than
+scroll. The list it built from is a plain composed array (`buildNavCommands`), not a hardcoded
+row, so a later feature adds its own entry without touching this one or any other command's
+condition. `[ clear expired ]` / `[ clear all ]` open the same confirm dialog as any destructive
+action, stating the exact count.
+
+The language command shows the current language as its bracketed word (`EN`/`ES`) and its
+accessible name states what it switches to ("Switch to Spanish"), itself in the language the
+panel is currently in. Choosing it switches immediately (both locales are preloaded) and persists
+the choice; without a choice the browser's language is used, English as fallback (FR-025, FR-029).
+
 ### Front matter (detail, first viewport)
 
 Token label line first: `Token:` (visually only) then the label as the `h2`, with `[ rename ]`
@@ -152,17 +168,25 @@ until its `[ reveal ]` (placed above the block) shows the real values.
 Like an RFC index: label (truncated), dotted leader in `ink-muted`, status word and time left in
 status color (condensed, pushed right, wraps under the label when needed); second line tail
 `…a9F3kQ2x` (ellipsis character), source (`manual`, `cookie`) and lifetime in `ink-muted`. Each
-line is one button named by label and status. Hover and focus use `surface-raised`. Toolbar line
-above: count, then `[ clear expired ]` (only when any) and `[ clear all ]`. Returning from a
-detail restores the scroll position and focuses the line that was opened.
+line is one button named by label and status. Hover and focus use `surface-raised`. A count line
+(`N tokens`) sits above the list; clearing lives in the command bar above the whole screen, not
+here. Returning from a detail restores the scroll position and focuses the line that was opened.
+
+### Info view
+
+Reached by `[ info ]` from any screen (FR-028); `[ back ]` returns to that same screen, not always
+the list. `h2` title (focused on open), one paragraph of purpose, then numbered sections for what
+is stored, what is not, and a built-versus-planned roadmap summary, exactly like a detail's
+sections. The version sits opposite `[ back ]` on the first line, in `text-cite`.
 
 ### Other
 
 Add token: `h2` title (focused on open), labeled textarea (`Token`), helper text, error text below
-naming the exact problem. Empty state: two sentences of purpose plus `[ add token ]`. Loading:
-three index lines as static sunken bars, no spinner. Confirm dialog: native `<dialog>` on the
-`scrim` backdrop. Undo toast: floating bar with `shadow-float`, pinned to the bottom gutter; the
-list gains bottom padding while it shows so it never covers the last line. It pauses its timer
+naming the exact problem. Empty state: two sentences of purpose; `[ add token ]` is not repeated
+here, since the command bar above already offers it on every screen, including an empty list.
+Loading: three index lines as static sunken bars, no spinner. Confirm dialog: native `<dialog>` on
+the `scrim` backdrop. Undo toast: floating bar with `shadow-float`, pinned to the bottom gutter;
+the list gains bottom padding while it shows so it never covers the last line. It pauses its timer
 while hovered or focused (WCAG 2.2.1); the deletion is announced by a persistent status region in
 the shell, not by the toast.
 

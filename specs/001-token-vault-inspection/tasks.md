@@ -248,7 +248,7 @@ switch that overrides the browser default and persists.
 - [x] T108 [US5] Wire production in src/entrypoints/sidepanel/main.tsx: `SwitchableI18nProvider` (`BrowserLocalePreferenceRepository`, `loadLocaleMessages`, `detectSupportedLocale(browser.i18n.getUILanguage())`) replaces `createBrowserI18n()`; keep `document.documentElement.lang` reactive to locale changes
 - [x] T109 [P] [US5] Add the new en/es message keys (info view, language command) to src/locales/{en,es}.yml
 - [x] T110 [US5] Update e2e/manage-vault.spec.ts for the relocated clear commands; write e2e/always-on-bar.spec.ts (US5 AS1–AS5): bar contents per screen; info opens from list/add/detail and `[ back ]` returns to each correctly; language switch persists across a reload; clearing all from an open detail returns to the list; run `pnpm test:e2e`
-- [ ] T111 [US5] Update DESIGN.md ("Command bar", "Info view") and README.md (mention the persistent bar and info view in Usage) for this addition
+- [x] T111 [US5] Update DESIGN.md ("Command bar", "Info view") and README.md (mention the persistent bar and info view in Usage) for this addition
 
 **Checkpoint**: every action from US1–US4 is reachable from one persistent bar; info and language
 are built, not deferred to roadmap item 009.
